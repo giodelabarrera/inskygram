@@ -1,0 +1,297 @@
+*,
+*::before,
+*::after
+  box-sizing: border-box
+
+html,
+body,
+dl,
+dt,
+dd,
+figure,
+ul,
+li,
+  margin: 0
+  padding: 0
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6
+  margin-top: 0
+  padding: 0
+  margin-bottom: 1em
+
+a
+  text-decoration: none
+  
+  &:focus
+    outline: none
+
+body
+  margin: 0
+  padding: 0
+  font-family: sans-serif
+  background-color: #fafafa
+
+main
+  padding-top: 60px
+  max-width: 1010px
+  margin: 0px auto
+  padding-left: 20px
+  padding-right: 20px
+  margin-bottom: 60px
+
+.text-link
+  color: #3e99ed
+
+.header-wrapper
+  background-color: #ffffff
+  border-bottom: 1px solid #e5e5e5
+  position: fixed
+  width: 100%
+  z-index: 1
+
+.main-wrapper
+  padding-top: 85px
+
+.is-eight-quarters
+  display: grid
+  grid-template-columns: 8fr 4fr
+
+.is-one-thirds
+  display: grid
+  grid-template-columns: repeat(3, 1fr)
+
+.grid-gap-30
+  grid-gap: 30px
+
+.has-text-gray
+  color: #999999
+
+.button
+  padding: 5px 12px
+  background-color: #fafafa
+  color: #262626
+  font-size: .9em
+  border-radius: 4px
+  font-weight: 500
+  cursor: pointer
+  min-width: 100px
+
+  &:focus
+    outline: none
+
+  &.is-primary
+    color: #ffffff
+    background-color: #3e99ed
+    border-color: #3e99ed
+
+  &.is-fullwidth
+    width: 100%
+
+.profile-posts-wrapper
+  border-top: 1px solid #efefef
+
+.tabs-wrapper
+  text-align: center
+
+.Tabs
+  display: inline-block
+  
+  &-item
+    float: left
+    list-style: none
+    margin: 0 40px
+
+  &-itemLink
+    padding: 1.3em 0
+    color: #959595
+    display: block
+    font-size: .8em
+    text-transform: uppercase
+    text-decoration: none
+    letter-spacing: .08em
+    font-weight: 600
+    
+    &.is-active
+      color: #000000
+      border-top: 1px solid #000000
+
+.saved-info
+  font-size: .8em
+  margin-bottom: 1.5em
+
+.block
+  max-width: 350px
+  background-color: #fff
+  border: 1px solid #dbdbdb
+  padding: 30px
+  margin: 0 auto
+  text-align: center
+
+  &-message
+    font-size: .9em
+
+.push-t-50
+  margin-top: 50px
+
+.Menu
+  display: inline-block
+  width: 100%
+  
+  &-item
+    list-style: none
+
+  &-itemLink
+    padding: 1.4em 2.2em
+    color: #262626
+    display: block
+    font-size: 1em
+    text-decoration: none
+    border-left: 2px solid #ffffff
+    
+    &:hover
+      background-color: #fafafa
+      color: #000000
+      border-left: 2px solid #dbdbdb
+
+    &.is-active
+      color: #000000
+      border-left: 2px solid #000000
+      font-weight: bold
+
+.edit-profile-wrapper
+  display: grid
+  grid-template-columns: 1fr 3fr
+  background-color: #fff
+  border: 1px solid #dbdbdb
+  border-radius: 3px
+
+.edit-profile-menu-container
+  border-right: 1px solid #dbdbdb
+
+.edit-profile-container
+  display: grid
+  grid-template-columns: 4fr 1fr
+
+.ReactModal__Content
+  top: 50% !important
+  left: 50% !important
+  right: auto !important
+  bottom: auto !important
+  marginRight: -50% !important
+  transform: translate(-50%, -50%) !important
+  width: 800px !important
+  max-height: 80% !important
+
+.ReactModal__Overlay
+  background-color: rgba(0,0,0,.75)!important
+
+.ReactModal__Overlay.ReactModal__Overlay--after-open
+  z-index: 2
+
+.ReactModal__Content.ReactModal__Content--after-open
+  border: none !important
+  background: none !important
+  border-radius: 0 !important
+  padding: 0 !important
+
+.AccountPrivate
+  background-color: #ffffff
+  border: 1px solid #efefef
+  padding: 50px
+  text-align: center
+  color: #262626
+
+  &-contentWrapper
+    max-width: 500px
+    margin: 0 auto
+
+  &-title
+    font-size: .9em
+    font-weight: bold
+    margin-bottom: 1.5em
+
+  &-body
+    font-size: .9em
+
+    & span
+      margin-bottom: .6em
+      display: inline-block  
+
+
+.react-autosuggest__container
+  position: relative
+
+.react-autosuggest__input
+  display: block
+  padding: 5px 7px
+  border-radius: 3px
+  background-color: #fafafa
+  border: 1px solid #dbdbdb
+  font-size: .9rem
+  width: 100%
+  text-align: center
+  max-width: 220px
+
+  &:focus
+    outline: none
+
+.react-autosuggest__suggestions-container
+  display: none
+  max-height: 500px
+  overflow-y: auto
+
+.react-autosuggest__container--open .react-autosuggest__suggestions-container
+  display: block
+  position: absolute
+  top: 50px
+  width: 280px
+  left: calc(50% - 140px)
+  border: 1px solid #e6e6e6
+  background-color: #fff
+  font-weight: 300
+  font-size: 16px
+  z-index: 2
+  box-shadow: 0 0 5px rgba(0,0,0,.0975);
+
+.react-autosuggest__suggestions-list
+  margin: 0
+  padding: 0
+  list-style-type: none
+
+.react-autosuggest__suggestion
+  cursor: pointer
+  padding: 10px 20px
+  
+  &:not(:first-child)
+    border-top: 1px solid #e6e6e6
+
+  &:hover
+    background-color: #fafafa
+
+.react-autosuggest__suggestion--focused
+  background-color: #0C7EAF
+  color: #fff
+
+.suggestion-content
+  display: flex
+  align-items: center
+  background-repeat: no-repeat
+
+.name
+  margin-left: 68px
+  line-height: 45px
+
+.highlight
+  color: #ee0000
+  font-weight: bold
+
+.react-autosuggest__suggestion--focused .highlight
+  color: #120000
+
+.push-10-l
+  margin-left: 10px

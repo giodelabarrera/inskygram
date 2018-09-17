@@ -1,0 +1,70 @@
+.EditProfile
+  padding: 30px
+  padding-top: 0
+
+  &-formFeedback
+    margin-top: 15px
+
+    &--error
+      color: tomato
+
+    &--success
+      color: green
+
+  &-field
+    display: grid
+    grid-template-columns: 8em 1fr
+    margin-bottom: 15px
+    grid-column-gap: 30px
+
+  &-fieldError
+    font-size: .8em
+    margin-top: 5px
+    color: tomato
+
+  &-label
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: flex-end
+    font-weight: bold
+    color: #252525
+
+  &-input
+    display: block
+    padding: 7px 12px
+    border-radius: 3px
+    background-color: #ffffff
+    border: 1px solid #dbdbdb
+    font-size: 1em
+    width: 100%
+
+    &:focus
+      outline: none
+
+  &-textarea
+    display: block
+    padding: 7px 12px
+    border-radius: 3px
+    background-color: #ffffff
+    border: 1px solid #dbdbdb
+    font-size: 1em
+    width: 100%
+    resize: none
+    height: 80px
+
+    &:focus
+      outline: none
+
+  &-select
+    display: block
+    padding: 7px 12px
+    border-radius: 3px
+    background-color: #ffffff
+    border: 1px solid #dbdbdb
+    font-size: 1em
+    width: 100%
+    height: 34px
+
+    &:focus
+      outline: none

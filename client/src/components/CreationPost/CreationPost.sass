@@ -1,0 +1,57 @@
+.CreationPost
+  background-color: #ffffff
+  height: 50vh
+
+  &-form
+    display: grid
+    grid-template-columns: 1fr 1fr
+    height: 100%
+
+  &-formFeedback
+    margin-top: 15px
+
+    &--error
+      color: tomato
+
+  &-imageWrapper
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: center
+    padding: 20px
+    border-right: 1px solid #efefef
+
+  &-uploadButton
+    padding: 2em 3em
+    display: inline-block
+    text-align: center
+    border: 1px solid #d1d1d1
+
+  &-uploadButtonLabel
+    display: block
+    
+  &-fieldsWrapper
+    padding: 20px
+
+  &-field
+    margin-bottom: 15px
+
+  &-label
+    margin-bottom: 10px
+    display: inline-block
+    font-weight: bold
+    color: #252525
+
+  &-textarea
+    display: block
+    padding: 7px 12px
+    border-radius: 3px
+    background-color: #ffffff
+    border: 1px solid #dbdbdb
+    font-size: 1em
+    width: 100%
+    resize: none
+    height: 80px
+
+    &:focus
+      outline: none

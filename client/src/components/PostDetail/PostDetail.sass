@@ -1,0 +1,138 @@
+.PostDetail
+  background-color: #ffffff
+  border: 1px solid #dbdbdb
+  border-radius: 3px
+  display: grid
+  grid-template-columns: 7.5fr 4.5fr
+
+  &-imageWrapper
+    display: flex
+    flex-direction: column
+    justify-content: center
+
+  &-body
+    padding: 20px 25px
+    display: flex
+    flex-direction: column
+    justify-content: space-between
+
+  &-bodyTop
+    padding-bottom: 7px
+
+  &-bodyBottom
+    border-top: 1px solid #dbdbdb
+
+  &-header
+    display: grid
+    grid-template-columns: 40px 1fr
+    grid-column-gap: 15px
+    border-bottom: 1px solid #dbdbdb
+    padding-bottom: 15px
+    margin-bottom: 15px
+
+  &-avatarImage
+    border-radius: 50%
+    width: 40px
+    height: 40px
+    object-fit: contain
+
+  &-headerInfo
+    display: flex
+    justify-content: center
+    flex-direction: column
+
+  &-usernameLink
+    text-decoration: none
+    color: #000000
+
+  &-username
+    font-size: .9em
+    margin-bottom: .2em
+
+  &-location
+    font-size: .8em
+
+  &-image
+    width: 500px
+    height: 500px
+    object-fit: contain
+
+  &-actions
+    display: flex
+    justify-content: space-between
+    margin-bottom: .7em
+    margin-top: 12px
+
+  &-leftActions a
+    margin-right: 25px
+
+  &-actionLikeIcon
+    color: #272727
+    font-size: 1.6em
+
+    &--marked
+      color: tomato
+
+  &-actionAddCommentIcon
+    color: #272727
+    font-size: 1.6em
+
+  &-actionSaveIcon
+    color: #272727
+    font-size: 1.6em
+
+    &--marked
+      color: #000000
+
+  &-numLikes
+    font-size: .9em
+    font-weight: bold
+    display: block
+    margin-bottom: .7em
+
+  &-commentsWrapper
+    max-height: 40vh
+    overflow-y: auto
+
+  &-caption
+    font-size: .9em
+    margin-bottom: .4em
+    line-height: 1.4em
+
+  &-captionUsername
+    font-weight: bold
+
+  &-captionUsernameLink
+    color: #000000
+
+  &-comment
+    font-size: .9em
+    margin-bottom: .4em
+    line-height: 1.4em
+
+  &-commentUsernameLink
+    color: #000000
+
+  &-commentUsername
+    font-weight: bold
+
+  &-creation
+    color: #999999
+    font-size: .6em
+    text-transform: uppercase
+    margin-bottom: .7rem
+    display: block
+
+  &-addComment
+    border-top: 1px solid #dbdbdb
+
+  &-addCommentTextarea
+    width: 100%
+    resize: none
+    padding: 20px 0
+    border: none
+    height: 50px
+    font-size: .9em
+
+    &:focus
+      outline: none

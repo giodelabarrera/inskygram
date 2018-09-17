@@ -1,0 +1,117 @@
+.ColumnPost
+  background-color: #ffffff
+  border: 1px solid #dbdbdb
+  border-radius: 3px
+  margin-bottom: 60px
+
+  &-header
+    padding: 15px
+    display: grid
+    grid-template-columns: 35px 1fr
+    grid-column-gap: 15px
+
+  &-avatarImage
+    border-radius: 50%
+    width: 35px
+    height: 35px
+    object-fit: contain
+
+  &-headerInfo
+    display: flex
+    justify-content: center
+    flex-direction: column
+
+  &-headerUsernameLink
+    text-decoration: none
+    color: #000000
+
+  &-username
+    font-size: .9em
+    margin-bottom: .2em
+
+  &-location
+    font-size: .8em
+
+  &-image
+    width: 100%
+
+  &-body
+    padding: 10px 15px
+
+  &-actions
+    display: flex
+    justify-content: space-between
+    margin-bottom: .7em
+
+  &-leftActions a
+    margin-right: 25px
+
+  &-actionLikeIcon
+    color: #272727
+    font-size: 1.6em
+
+    &--marked
+      color: tomato
+
+  &-actionAddCommentIcon
+    color: #272727
+    font-size: 1.6em
+
+  &-actionSaveIcon
+    color: #272727
+    font-size: 1.6em
+
+    &--marked
+      color: #000000
+
+  &-numLikes
+    font-size: .9em
+    font-weight: bold
+    display: inline-block
+    margin-bottom: .7em
+
+  &-caption
+    font-size: .9em
+    margin-bottom: .4em
+    line-height: 1.4em
+
+  &-captionUsernameLink
+    color: #000000
+
+  &-captionUsername
+    font-weight: bold
+
+  &-comments
+    margin-bottom: 1em
+
+  &-comment
+    font-size: .9em
+    margin-bottom: .4em
+    line-height: 1.4em
+
+  &-commentUsernameLink
+    color: #000000
+
+  &-commentUsername
+    font-weight: bold
+
+  &-creation
+    color: #999999
+    font-size: .6em
+    text-transform: uppercase
+    margin-bottom: .7rem
+    display: block
+
+  &-addComment
+    border-top: 1px solid #dbdbdb
+
+  &-addCommentTextarea
+    width: 100%
+    resize: none
+    padding: 20px 0
+    border: none
+    height: 50px
+    font-size: .9em
+
+    &:focus
+      outline: none

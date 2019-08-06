@@ -4,7 +4,7 @@ import User, { UserModelInterface } from "../models/user";
 import Following, { FollowingModelInterface } from "../models/following";
 import logic from ".";
 import { connect } from "../db";
-const Jimp: any = require("jimp");
+import Jimp from "jimp";
 import fs from "fs";
 import { Types } from "mongoose";
 import { AccessDeniedError, UniqueConstraintError, LogicError } from "./errors";

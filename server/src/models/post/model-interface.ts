@@ -1,8 +1,8 @@
-import { Document, Types } from "mongoose";
-import { CommentModelInterface } from "../comment";
-import { LikeModelInterface } from "../like";
-import { UserTagModelInterface } from "../user-tag";
-import PostInterface from "./interface";
+import { Document, Types } from 'mongoose';
+import { CommentModelInterface } from '../comment';
+import { LikeModelInterface } from '../like';
+import { UserTagModelInterface } from '../user-tag';
+import PostInterface from './interface';
 
 /**
  * Post Model

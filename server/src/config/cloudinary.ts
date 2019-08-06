@@ -1,7 +1,8 @@
-import { config } from "dotenv";
-const cloudinary = require("cloudinary");
+import { config } from 'dotenv';
+import cloudinary from 'cloudinary';
 
 config();
+
 const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } = process.env;
 
 cloudinary.config({

@@ -1,5 +1,5 @@
-import { Document, Types } from "mongoose";
-import FollowRequestInterface from "./interface";
+import { Document, Types } from 'mongoose';
+import FollowRequestInterface from './interface';
 
 /**
  *

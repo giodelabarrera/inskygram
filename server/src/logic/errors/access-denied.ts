@@ -1,4 +1,4 @@
-import LogicError from "./logic";
+import LogicError from './logic';
 
 /**
  *
@@ -7,7 +7,7 @@ import LogicError from "./logic";
  * @extends {LogicError}
  */
 class AccessDeniedError extends LogicError {
-  constructor(message: string = "access denied") {
+  constructor(message: string = 'access denied') {
     super(message);
   }
 }

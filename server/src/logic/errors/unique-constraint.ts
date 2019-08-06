@@ -1,4 +1,4 @@
-import LogicError from "./logic";
+import LogicError from './logic';
 
 /**
  *
@@ -7,7 +7,7 @@ import LogicError from "./logic";
  * @extends {LogicError}
  */
 class UniqueConstraintError extends LogicError {
-  constructor(message: string = "unique constraint error") {
+  constructor(message: string = 'unique constraint error') {
     super(message);
   }
 }

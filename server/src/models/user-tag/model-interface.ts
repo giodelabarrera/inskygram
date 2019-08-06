@@ -1,5 +1,5 @@
-import { Document, Types } from "mongoose";
-import UserTagInterface from "./interface";
+import { Document, Types } from 'mongoose';
+import UserTagInterface from './interface';
 
 /**
  *

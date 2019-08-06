@@ -1,4 +1,4 @@
-import LogicError from "./logic";
+import LogicError from './logic';
 
 /**
  *
@@ -7,7 +7,7 @@ import LogicError from "./logic";
  * @extends {LogicError}
  */
 class NotFoundError extends LogicError {
-  constructor(message: string = "not found") {
+  constructor(message: string = 'not found') {
     super(message);
   }
 }

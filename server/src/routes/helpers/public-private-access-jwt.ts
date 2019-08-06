@@ -1,5 +1,5 @@
-import passport from "passport";
-import { Response, Request } from "express";
+import passport from 'passport';
+import { Response, Request } from 'express';
 
 /**
  * Middleware to public access and private access
@@ -9,11 +9,14 @@ import { Response, Request } from "express";
  * @param {*} next
  */
 function publicPrivateAccessJwt(req: Request, res: Response, next: any) {
-  passport.authenticate("jwt", (err, user, info) => {
+  passport.authenticate('jwt', (err, user, info) => {
+    if (err) {
+      return next(err);
+    }
 
-    if (err) { return next(err); }
-
-    if (user) { req.user = user; }
+    if (user) {
+      req.user = user;
+    }
 
     next();
   })(req, res, next);

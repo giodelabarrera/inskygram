@@ -1,11 +1,11 @@
-import { Schema } from "mongoose";
+import { Schema } from 'mongoose';
 
 const { Types: ObjectId } = Schema;
 
 const followRequestSchema: Schema = new Schema({
   user: {
     type: ObjectId,
-    ref: "User",
+    ref: 'User',
     required: true,
   },
   createdAt: { type: Date, default: Date.now, required: true },

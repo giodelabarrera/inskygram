@@ -9,11 +9,10 @@
     "isolatedModules": false,
     "module": "commonjs",
     "moduleResolution": "node",
+    "noImplicitAny": false,
     "outDir": "build",
     "resolveJsonModule": true,
-    "skipLibCheck": true,
     "sourceMap": true,
-    "strict": false,
     "target": "es5"
   },
   "include": ["src/**/*"],

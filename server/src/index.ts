@@ -10,7 +10,7 @@ config();
 
 const { DATABASE_URL, PORT } = process.env;
 
-connect(DATABASE_URL)
+connect(DATABASE_URL as string)
   .then(db => {
 
     const app = express();
@@ -25,5 +25,6 @@ connect(DATABASE_URL)
     app.use("/api", userRouter);
     app.use("/api", postRouter);
 
+    // tslint:disable-next-line:no-console
     app.listen(PORT, () => console.log(`inskygram up and running on port ${PORT}`));
   });

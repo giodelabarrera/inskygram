@@ -3,11 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "webpack --env.mode production",
-    "start": "node build",
+    "build": "tsc",
+    "start": "nodemon build",
     "watch": "concurrently -k npm:watch-ts npm:watch-node",
     "watch-ts": "webpack --env.mode development --watch",
-    "watch-node": "nodemon build",
     "debug-node": "node inspect build",
     "debug-test": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "test": "jest"
@@ -44,8 +43,6 @@
     "@types/passport-local": "^1.0.33",
     "@types/rimraf": "^2.0.2",
     "@types/validator": "^9.4.1",
-    "awesome-typescript-loader": "^5.2.0",
-    "clean-webpack-plugin": "^0.1.19",
     "concurrently": "^4.0.1",
     "eslint": "^5.4.0",
     "jest": "^23.5.0",
@@ -57,10 +54,6 @@
     "tslint": "^5.11.0",
     "tslint-config-standard": "^7.1.0",
     "typedoc": "^0.12.0",
-    "typescript": "^3.0.1",
-    "webpack": "^4.17.1",
-    "webpack-cli": "^3.1.0",
-    "webpack-merge": "^4.1.4",
-    "webpack-node-externals": "^1.7.2"
+    "typescript": "^3.0.1"
   }
 }

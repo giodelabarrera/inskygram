@@ -5,8 +5,6 @@
   "scripts": {
     "build": "tsc",
     "start": "nodemon build",
-    "watch": "concurrently -k npm:watch-ts npm:watch-node",
-    "watch-ts": "webpack --env.mode development --watch",
     "debug-node": "node inspect build",
     "debug-test": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "test": "jest"
@@ -43,17 +41,15 @@
     "@types/passport-local": "^1.0.33",
     "@types/rimraf": "^2.0.2",
     "@types/validator": "^9.4.1",
-    "concurrently": "^4.0.1",
     "eslint": "^5.4.0",
     "jest": "^23.5.0",
     "jimp": "^0.4.0",
     "nodemon": "^1.18.3",
     "rimraf": "^2.6.2",
-    "source-map-loader": "^0.2.4",
     "ts-jest": "^23.1.4",
     "tslint": "^5.11.0",
     "tslint-config-standard": "^7.1.0",
     "typedoc": "^0.12.0",
-    "typescript": "^3.0.1"
+    "typescript": "^3.5.3"
   }
 }

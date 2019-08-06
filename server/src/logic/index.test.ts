@@ -24,7 +24,7 @@ const { ObjectId } = Types;
 let db: any;
 
 beforeAll(async () => {
-  db = await connect(DATABASE_URL_TEST);
+  db = await connect(DATABASE_URL_TEST as string);
 });
 
 beforeEach(async () => {

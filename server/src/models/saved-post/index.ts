@@ -1,7 +1,8 @@
-import SavedPost from './saved-post';
-import SavedPostInterface from './interface';
-import SavedPostModelInterface from './model-interface';
+import { Model, model } from 'mongoose';
+import { ISavedPost, ISavedPostModel } from './interfaces';
 import savedPostSchema from './schema';
 
+const SavedPost: Model<ISavedPostModel> = model('SavedPost', savedPostSchema);
+
 export default SavedPost;
-export { SavedPostInterface, SavedPostModelInterface, savedPostSchema };
+export { ISavedPost, ISavedPostModel, savedPostSchema };

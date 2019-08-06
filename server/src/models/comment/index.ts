@@ -1,9 +1,8 @@
-import { model, Model } from 'mongoose';
-import CommentInterface from './interface';
-import CommentModelInterface from './model-interface';
+import { Model, model } from 'mongoose';
+import { IComment, ICommentModel } from './interfaces';
 import commentSchema from './schema';
 
-const Comment: Model<CommentModelInterface> = model('Comment', commentSchema);
+const Comment: Model<ICommentModel> = model('Comment', commentSchema);
 
 export default Comment;
-export { CommentInterface, CommentModelInterface, commentSchema };
+export { IComment, ICommentModel, commentSchema };

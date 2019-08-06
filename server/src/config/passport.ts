@@ -4,7 +4,7 @@ import PassportJwt, { ExtractJwt, StrategyOptions, VerifiedCallback } from 'pass
 import { SignOptions } from 'jsonwebtoken';
 import logic from '../logic';
 import PassportLocal from 'passport-local';
-import { UserModelInterface } from '../models/user';
+import { IUserModel } from '../models/user';
 
 config();
 
@@ -43,7 +43,7 @@ passport.use(
 
     logic
       .retrieveUser(username)
-      .then((user: UserModelInterface) => done(undefined, user ? user.username : false))
+      .then((user: IUserModel) => done(undefined, user ? user.username : false))
       .catch((err: Error) => done(err, false));
   })
 );

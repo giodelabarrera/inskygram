@@ -1,8 +1,8 @@
 import { config } from 'dotenv';
 import { Router, Response, Request } from 'express';
 import logic from '../logic';
-import { PostModelInterface } from '../models/post';
-import { UserModelInterface } from '../models/user';
+import { IPostModel } from '../models/post';
+import { IUserModel } from '../models/user';
 import statusError from './helpers/status-error';
 
 config();
@@ -16,7 +16,7 @@ router.get('/search', (req: Request, res: Response) => {
 
   logic
     .search(q)
-    .then((users: UserModelInterface[]) => res.status(200).json(users))
+    .then((users: IUserModel[]) => res.status(200).json(users))
     .catch((err: Error) => {
       const { message } = err;
       const status = statusError(err);

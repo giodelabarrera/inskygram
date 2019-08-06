@@ -1,9 +1,8 @@
-import { model, Model } from 'mongoose';
-import UserInterface from './interface';
-import UserModelInterface from './model-interface';
+import { Model, model } from 'mongoose';
+import { IUser, IUserModel } from './interfaces';
 import userSchema from './schema';
 
-const User: Model<UserModelInterface> = model('User', userSchema);
+const User: Model<IUserModel> = model<IUserModel>('User', userSchema);
 
 export default User;
-export { UserInterface, UserModelInterface, userSchema };
+export { IUser, IUserModel, userSchema };

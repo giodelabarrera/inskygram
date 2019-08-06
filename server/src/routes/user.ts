@@ -5,8 +5,8 @@ import bodyParser from 'body-parser';
 import logic from '../logic';
 import statusError from './helpers/status-error';
 import publicPrivateAccessJwt from './helpers/public-private-access-jwt';
-import { UserModelInterface } from '../models/user';
-import { PostModelInterface } from '../models/post';
+import { IUserModel } from '../models/user';
+import { IPostModel } from '../models/post';
 
 config();
 
@@ -22,7 +22,7 @@ router.get('/users/:username', publicPrivateAccessJwt, (req: Request, res: Respo
 
   logic
     .retrieveUser(username, targetUsername)
-    .then((user: UserModelInterface) => res.json(user))
+    .then((user: IUserModel) => res.json(user))
     .catch((err: Error) => {
       const { message } = err;
       const status = statusError(err);
@@ -58,7 +58,7 @@ router.get('/users/:username/followers', publicPrivateAccessJwt, (req: Request, 
 
   logic
     .listUserFollowers(username, targetUsername)
-    .then((followerUsers: UserModelInterface[]) => res.json(followerUsers))
+    .then((followerUsers: IUserModel[]) => res.json(followerUsers))
     .catch((err: Error) => {
       const { message } = err;
       const status = statusError(err);
@@ -73,7 +73,7 @@ router.get('/users/:username/followings', publicPrivateAccessJwt, (req: Request,
 
   logic
     .listUserFollowings(username, targetUsername)
-    .then((followingUsers: UserModelInterface[]) => res.json(followingUsers))
+    .then((followingUsers: IUserModel[]) => res.json(followingUsers))
     .catch((err: Error) => {
       const { message } = err;
       const status = statusError(err);
@@ -88,7 +88,7 @@ router.get('/users/:username/posts', publicPrivateAccessJwt, (req: Request, res:
 
   logic
     .listUserPosts(username, targetUsername)
-    .then((posts: PostModelInterface[]) => res.json(posts))
+    .then((posts: IPostModel[]) => res.json(posts))
     .catch((err: Error) => {
       const { message } = err;
       const status = statusError(err);
@@ -103,7 +103,7 @@ router.get('/users/:username/saved', publicPrivateAccessJwt, (req: Request, res:
 
   logic
     .listUserSavedPosts(username, targetUsername)
-    .then((savedPosts: PostModelInterface[]) => res.json(savedPosts))
+    .then((savedPosts: IPostModel[]) => res.json(savedPosts))
     .catch((err: Error) => {
       const { message } = err;
       const status = statusError(err);

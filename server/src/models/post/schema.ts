@@ -1,7 +1,6 @@
 import { Schema, SchemaOptions } from 'mongoose';
 import { commentSchema } from '../comment';
 import { likeSchema } from '../like';
-import { userTagSchema } from '../user-tag';
 
 const { Types: ObjectId } = Schema;
 
@@ -30,7 +29,6 @@ const postSchema: Schema = new Schema(
     },
     likes: [likeSchema],
     comments: [commentSchema],
-    userTags: [userTagSchema],
   },
   options
 );

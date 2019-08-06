@@ -1,5 +1,4 @@
 import { config } from "dotenv";
-import "jest";
 import Post, { PostModelInterface } from "../models/post";
 import User, { UserModelInterface } from "../models/user";
 import Following, { FollowingModelInterface } from "../models/following";
@@ -14,8 +13,6 @@ import rimraf from "rimraf";
 import SavedPost, { SavedPostModelInterface } from "../models/saved-post";
 
 config();
-
-jest.setTimeout(10000);
 
 const { DATABASE_URL_TEST } = process.env;
 
@@ -137,7 +134,7 @@ describe("logic", () => {
           const privatePassword = `123${Math.random()}`;
           const privateFilename = `${privateUsername}.png`;
 
-          return await User.create({ username: privateUsername, email: privateEmail, password: privatePassword, privateAccount: true });
+          return User.create({ username: privateUsername, email: privateEmail, password: privatePassword, privateAccount: true });
         })
         .then((privateUser: UserModelInterface) => expect(logic._isSameUser(user, privateUser)).toBeFalsy());
     });

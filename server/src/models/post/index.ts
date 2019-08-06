@@ -1,9 +1,8 @@
-import { model, Model } from 'mongoose';
-import PostInterface from './interface';
-import PostModelInterface from './model-interface';
+import { Model, model } from 'mongoose';
+import { IPost, IPostModel } from './interfaces';
 import postSchema from './schema';
 
-const Post: Model<PostModelInterface> = model('Post', postSchema);
+const Post: Model<IPostModel> = model('Post', postSchema);
 
 export default Post;
-export { PostInterface, PostModelInterface, postSchema };
+export { IPost, IPostModel, postSchema };

@@ -5,8 +5,8 @@ import multer from 'multer';
 import passport from 'passport';
 import logic from '../logic';
 import statusError from './helpers/status-error';
-import { UserModelInterface } from '../models/user';
-import { PostModelInterface } from '../models/post';
+import { IUserModel } from '../models/user';
+import { IPostModel } from '../models/post';
 
 config();
 
@@ -23,7 +23,7 @@ router.get('/me', [validateJwt], (req: Request, res: Response) => {
 
   logic
     .retrieveUser(username)
-    .then((user: UserModelInterface) => res.json(user))
+    .then((user: IUserModel) => res.json(user))
     .catch((err: Error) => {
       const { message } = err;
       const status = statusError(err);
@@ -98,7 +98,7 @@ router.get('/me/followers', validateJwt, (req: Request, res: Response) => {
 
   logic
     .listUserFollowers(username)
-    .then((followerUsers: UserModelInterface[]) => res.json(followerUsers))
+    .then((followerUsers: IUserModel[]) => res.json(followerUsers))
     .catch((err: Error) => {
       const { message } = err;
       const status = statusError(err);
@@ -112,7 +112,7 @@ router.get('/me/followings', validateJwt, (req: Request, res: Response) => {
 
   logic
     .listUserFollowings(username)
-    .then((followingUsers: UserModelInterface[]) => res.json(followingUsers))
+    .then((followingUsers: IUserModel[]) => res.json(followingUsers))
     .catch((err: Error) => {
       const { message } = err;
       const status = statusError(err);
@@ -126,7 +126,7 @@ router.get('/me/posts', validateJwt, (req: Request, res: Response) => {
 
   logic
     .listUserPosts(username, undefined)
-    .then((posts: PostModelInterface[]) => res.json(posts))
+    .then((posts: IPostModel[]) => res.json(posts))
     .catch((err: Error) => {
       const { message } = err;
       const status = statusError(err);
@@ -140,7 +140,7 @@ router.get('/me/saved', validateJwt, (req: Request, res: Response) => {
 
   logic
     .listUserSavedPosts(username, undefined)
-    .then((savedPosts: PostModelInterface[]) => res.json(savedPosts))
+    .then((savedPosts: IPostModel[]) => res.json(savedPosts))
     .catch((err: Error) => {
       const { message } = err;
       const status = statusError(err);
@@ -156,7 +156,7 @@ router.get('/me/wall', validateJwt, (req: Request, res: Response) => {
 
   logic
     .listUserWall(username, perPage, page)
-    .then((posts: PostModelInterface[]) => res.json(posts))
+    .then((posts: IPostModel[]) => res.json(posts))
     .catch((err: Error) => {
       const { message } = err;
       const status = statusError(err);
@@ -172,7 +172,7 @@ router.get('/me/explore', validateJwt, (req: Request, res: Response) => {
 
   logic
     .listExplorePosts(username, perPage, page)
-    .then((posts: PostModelInterface[]) => res.status(200).json(posts))
+    .then((posts: IPostModel[]) => res.status(200).json(posts))
     .catch((err: Error) => {
       const { message } = err;
       const status = statusError(err);

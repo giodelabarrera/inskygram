@@ -1,9 +1,8 @@
-import { model, Model } from 'mongoose';
-import FollowerInterface from './interface';
-import FollowerModelInterface from './model-interface';
+import { Model, model } from 'mongoose';
+import { IFollower, IFollowerModel } from './interfaces';
 import followerSchema from './schema';
 
-const Follower: Model<FollowerModelInterface> = model('Follower', followerSchema);
+const Follower: Model<IFollowerModel> = model('Follower', followerSchema);
 
 export default Follower;
-export { FollowerInterface, FollowerModelInterface, followerSchema };
+export { IFollower, IFollowerModel, followerSchema };

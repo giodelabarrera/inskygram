@@ -1,16 +1,16 @@
 import { config } from 'dotenv';
-import Post, { PostModelInterface } from '../models/post';
-import User, { UserModelInterface } from '../models/user';
-import Following, { FollowingModelInterface } from '../models/following';
+import Post, { IPostModel } from '../models/post';
+import User, { IUserModel } from '../models/user';
+import Following, { IFollowingModel } from '../models/following';
 import logic from '.';
 import { connect } from '../db';
 import Jimp from 'jimp';
 import fs from 'fs';
 import { Types } from 'mongoose';
 import { AccessDeniedError, UniqueConstraintError, LogicError } from './errors';
-import Follower, { FollowerModelInterface } from '../models/follower';
+import Follower, { IFollowerModel } from '../models/follower';
 import rimraf from 'rimraf';
-import SavedPost, { SavedPostModelInterface } from '../models/saved-post';
+import SavedPost, { ISavedPostModel } from '../models/saved-post';
 
 config();
 
@@ -48,15 +48,15 @@ describe('logic', () => {
   });
 
   describe('is following user', () => {
-    let user: UserModelInterface;
+    let user: IUserModel;
 
-    let targetUser: UserModelInterface;
+    let targetUser: IUserModel;
     let targetUsername: string;
     let targetEmail: string;
     let targetPassword: string;
     let targetFilename: string;
 
-    let privateUser: UserModelInterface;
+    let privateUser: IUserModel;
     let privateUsername: string;
     let privateEmail: string;
     let privatePassword: string;
@@ -106,7 +106,7 @@ describe('logic', () => {
 
           return user.save();
         })
-        .then((user: UserModelInterface) => {
+        .then((user: IUserModel) => {
           const follower = new Follower();
           follower.user = user._id;
           follower.createdAt = new Date();
@@ -121,8 +121,8 @@ describe('logic', () => {
   });
 
   describe('is same user', () => {
-    let user: UserModelInterface;
-    let targetUser: UserModelInterface;
+    let user: IUserModel;
+    let targetUser: IUserModel;
 
     beforeEach(async () => {
       user = await User.create({ username, email, password });
@@ -149,7 +149,7 @@ describe('logic', () => {
             privateAccount: true,
           });
         })
-        .then((privateUser: UserModelInterface) =>
+        .then((privateUser: IUserModel) =>
           expect(logic._isSameUser(user, privateUser)).toBeFalsy()
         );
     });
@@ -276,10 +276,10 @@ describe('logic', () => {
   });
 
   describe('retrieve user', () => {
-    let user: UserModelInterface;
+    let user: IUserModel;
 
     beforeEach(() => {
-      return User.create({ username, email, password }).then((_user: UserModelInterface) => {
+      return User.create({ username, email, password }).then((_user: IUserModel) => {
         user = _user;
       });
     });
@@ -288,7 +288,7 @@ describe('logic', () => {
       let targetUsername: string;
       let targetEmail: string;
       let targetPassword: string;
-      let targetUser: UserModelInterface;
+      let targetUser: IUserModel;
 
       beforeEach(async () => {
         targetUsername = `user-${Math.random()}`;
@@ -307,7 +307,7 @@ describe('logic', () => {
       test('should retrieve correctly a public user seeing him by a logged-in user', () => {
         return logic
           .retrieveUser(username, targetUsername)
-          .then((targetUser: UserModelInterface) => {
+          .then((targetUser: IUserModel) => {
             expect(targetUser).toBeInstanceOf(User);
             expect(targetUser._id).toBeInstanceOf(ObjectId);
             expect(targetUser.username).toBe(targetUsername);
@@ -317,7 +317,7 @@ describe('logic', () => {
       test('should retrieve correctly a public user seeing him by a user not logged in', () => {
         return logic
           .retrieveUser(undefined, targetUsername)
-          .then((targetUser: UserModelInterface) => {
+          .then((targetUser: IUserModel) => {
             expect(targetUser).toBeInstanceOf(User);
             expect(targetUser._id).toBeInstanceOf(ObjectId);
             expect(targetUser.username).toBe(targetUsername);
@@ -329,7 +329,7 @@ describe('logic', () => {
 
         return targetUser
           .save()
-          .then((targetUser: UserModelInterface) => {
+          .then((targetUser: IUserModel) => {
             const following = new Following();
             following.user = targetUser._id;
             following.createdAt = new Date();
@@ -338,8 +338,8 @@ describe('logic', () => {
 
             return targetUser.save();
           })
-          .then((targetUser: UserModelInterface) => logic.retrieveUser(username, targetUsername))
-          .then((targetUser: UserModelInterface) => {
+          .then((targetUser: IUserModel) => logic.retrieveUser(username, targetUsername))
+          .then((targetUser: IUserModel) => {
             expect(targetUser).toBeInstanceOf(User);
             expect(targetUser._id).toBeInstanceOf(ObjectId);
             expect(targetUser.username).toBe(targetUsername);
@@ -351,8 +351,8 @@ describe('logic', () => {
 
         return targetUser
           .save()
-          .then((targetUser: UserModelInterface) => logic.retrieveUser(username, targetUsername))
-          .then((targetUser: UserModelInterface) => {
+          .then((targetUser: IUserModel) => logic.retrieveUser(username, targetUsername))
+          .then((targetUser: IUserModel) => {
             expect(targetUser).toBeInstanceOf(User);
             expect(targetUser._id).toBeInstanceOf(ObjectId);
             expect(targetUser.username).toBe(targetUsername);
@@ -364,8 +364,8 @@ describe('logic', () => {
 
         return targetUser
           .save()
-          .then((targetUser: UserModelInterface) => logic.retrieveUser(undefined, targetUsername))
-          .then((targetUser: UserModelInterface) => {
+          .then((targetUser: IUserModel) => logic.retrieveUser(undefined, targetUsername))
+          .then((targetUser: IUserModel) => {
             expect(targetUser).toBeInstanceOf(User);
             expect(targetUser._id).toBeInstanceOf(ObjectId);
             expect(targetUser.username).toBe(targetUsername);
@@ -391,8 +391,8 @@ describe('logic', () => {
 
         return user
           .save()
-          .then((user: UserModelInterface) => logic.retrieveUser(username))
-          .then((user: UserModelInterface) => {
+          .then((user: IUserModel) => logic.retrieveUser(username))
+          .then((user: IUserModel) => {
             expect(user).toBeInstanceOf(User);
             expect(user._id).toBeInstanceOf(ObjectId);
             expect(user.username).toBe(username);
@@ -435,7 +435,7 @@ describe('logic', () => {
 
           return User.findOne({ username });
         })
-        .then((user: UserModelInterface) => {
+        .then((user: IUserModel) => {
           expect(user.name).toBe(name);
           expect(user.website).toBe(website);
           expect(user.phoneNumber).toBe(phoneNumber);
@@ -473,7 +473,7 @@ describe('logic', () => {
 
           return User.findOne({ username });
         })
-        .then((user: UserModelInterface) => {
+        .then((user: IUserModel) => {
           expect(user.name).toBe(name);
           expect(user.website).toBe(website);
           expect(user.phoneNumber).toBe(phoneNumber);
@@ -510,7 +510,7 @@ describe('logic', () => {
 
           return User.findOne({ username });
         })
-        .then((user: UserModelInterface) => {
+        .then((user: IUserModel) => {
           expect(user.name).toBeUndefined();
           expect(user.website).toBe(website);
           expect(user.phoneNumber).toBe(phoneNumber);
@@ -551,7 +551,7 @@ describe('logic', () => {
 
           return User.findOne({ username });
         })
-        .then((user: UserModelInterface) => {
+        .then((user: IUserModel) => {
           expect(user.name).toBe(name);
           expect(user.biography).toBe(biography);
           expect(user.privateAccount).toBe(privateAccount);
@@ -574,7 +574,7 @@ describe('logic', () => {
 
           return User.findOne({ username });
         })
-        .then((user: UserModelInterface) => {
+        .then((user: IUserModel) => {
           expect(user).toBeInstanceOf(User);
           expect(user.email).toBe(email);
           expect(user.password).toBe(newPassword);
@@ -616,7 +616,7 @@ describe('logic', () => {
 
           return User.findOne({ username });
         })
-        .then((user: UserModelInterface) => {
+        .then((user: IUserModel) => {
           expect(user).toBeInstanceOf(User);
           expect(user.imageId).toBeDefined();
         });
@@ -627,8 +627,8 @@ describe('logic', () => {
     let targetUsername: string;
     let targetEmail: string;
     let targetPassword: string;
-    let user: UserModelInterface;
-    let targetUser: UserModelInterface;
+    let user: IUserModel;
+    let targetUser: IUserModel;
 
     beforeEach(async () => {
       targetUsername = `user-${Math.random()}`;
@@ -670,7 +670,7 @@ describe('logic', () => {
   });
 
   describe('list user followers', () => {
-    let user: UserModelInterface;
+    let user: IUserModel;
 
     beforeEach(async () => {
       user = await User.create({ username, email, password });
@@ -680,7 +680,7 @@ describe('logic', () => {
       let targetUsername: string;
       let targetEmail: string;
       let targetPassword: string;
-      let targetUser: UserModelInterface;
+      let targetUser: IUserModel;
 
       beforeEach(async () => {
         targetUsername = `user-${Math.random()}`;
@@ -693,7 +693,7 @@ describe('logic', () => {
           password: targetPassword,
         });
 
-        const followers: FollowerModelInterface[] = [];
+        const followers: IFollowerModel[] = [];
 
         for (let i = 0; i < 4; i++) {
           const randomUsername = `user-${Math.random()}`;
@@ -729,13 +729,13 @@ describe('logic', () => {
       test('should list the followers of a public user seeing him by a logged-in user', () => {
         return logic
           .listUserFollowers(username, targetUsername)
-          .then((followers: UserModelInterface[]) => expect(followers).toHaveLength(4));
+          .then((followers: IUserModel[]) => expect(followers).toHaveLength(4));
       });
 
       test('should list the followers of a public user seeing him by a user not logged in', () => {
         return logic
           .listUserFollowers(undefined, targetUsername)
-          .then((followers: UserModelInterface[]) => expect(followers).toHaveLength(4));
+          .then((followers: IUserModel[]) => expect(followers).toHaveLength(4));
       });
 
       test('should list the followers of a private user seeing him by a logged-in follower user', () => {
@@ -743,7 +743,7 @@ describe('logic', () => {
 
         return targetUser
           .save()
-          .then((targetUser: UserModelInterface) => {
+          .then((targetUser: IUserModel) => {
             const following = new Following();
             following.user = targetUser._id;
             following.createdAt = new Date();
@@ -752,7 +752,7 @@ describe('logic', () => {
 
             return user.save();
           })
-          .then((user: UserModelInterface) => {
+          .then((user: IUserModel) => {
             const follower = new Follower();
             follower.user = user._id;
             follower.createdAt = new Date();
@@ -761,10 +761,10 @@ describe('logic', () => {
 
             return targetUser.save();
           })
-          .then((targetUser: UserModelInterface) =>
+          .then((targetUser: IUserModel) =>
             logic.listUserFollowers(username, targetUsername)
           )
-          .then((followers: UserModelInterface[]) => expect(followers).toHaveLength(5));
+          .then((followers: IUserModel[]) => expect(followers).toHaveLength(5));
       });
 
       test(
@@ -775,7 +775,7 @@ describe('logic', () => {
 
           return targetUser
             .save()
-            .then((targetUser: UserModelInterface) =>
+            .then((targetUser: IUserModel) =>
               logic.listUserFollowers(username, targetUsername)
             )
             .catch(({ message }) => {
@@ -792,7 +792,7 @@ describe('logic', () => {
 
           return targetUser
             .save()
-            .then((targetUser: UserModelInterface) =>
+            .then((targetUser: IUserModel) =>
               logic.listUserFollowers(undefined, targetUsername)
             )
             .catch(({ message }) => {
@@ -804,7 +804,7 @@ describe('logic', () => {
 
     describe('user', () => {
       beforeEach(async () => {
-        const followers: FollowerModelInterface[] = [];
+        const followers: IFollowerModel[] = [];
 
         for (let i = 0; i < 4; i++) {
           const randomUsername = `user-${Math.random()}`;
@@ -840,13 +840,13 @@ describe('logic', () => {
       test('should list the followers of the logged-in user', () => {
         return logic
           .listUserFollowers(username)
-          .then((followers: UserModelInterface[]) => expect(followers).toHaveLength(4));
+          .then((followers: IUserModel[]) => expect(followers).toHaveLength(4));
       });
     });
   });
 
   describe('list user followings', () => {
-    let user: UserModelInterface;
+    let user: IUserModel;
 
     beforeEach(async () => {
       user = await User.create({ username, email, password });
@@ -856,7 +856,7 @@ describe('logic', () => {
       let targetUsername: string;
       let targetEmail: string;
       let targetPassword: string;
-      let targetUser: UserModelInterface;
+      let targetUser: IUserModel;
 
       beforeEach(async () => {
         targetUsername = `user-${Math.random()}`;
@@ -869,7 +869,7 @@ describe('logic', () => {
           password: targetPassword,
         });
 
-        const followings: FollowingModelInterface[] = [];
+        const followings: IFollowingModel[] = [];
 
         for (let i = 0; i < 4; i++) {
           const randomUsername = `user-${Math.random()}`;
@@ -905,13 +905,13 @@ describe('logic', () => {
       test('should list the followings of a public user seeing him by a logged-in user', () => {
         return logic
           .listUserFollowings(username, targetUsername)
-          .then((followings: UserModelInterface[]) => expect(followings).toHaveLength(4));
+          .then((followings: IUserModel[]) => expect(followings).toHaveLength(4));
       });
 
       test('should list the followings of a public user seeing him by a user not logged in', () => {
         return logic
           .listUserFollowings(undefined, targetUsername)
-          .then((followings: UserModelInterface[]) => expect(followings).toHaveLength(4));
+          .then((followings: IUserModel[]) => expect(followings).toHaveLength(4));
       });
 
       test('should list the followings of a private user seeing him by a logged-in follower user', () => {
@@ -919,7 +919,7 @@ describe('logic', () => {
 
         return targetUser
           .save()
-          .then((targetUser: UserModelInterface) => {
+          .then((targetUser: IUserModel) => {
             const following = new Following();
             following.user = targetUser._id;
             following.createdAt = new Date();
@@ -928,7 +928,7 @@ describe('logic', () => {
 
             return user.save();
           })
-          .then((user: UserModelInterface) => {
+          .then((user: IUserModel) => {
             const follower = new Follower();
             follower.user = user._id;
             follower.createdAt = new Date();
@@ -937,10 +937,10 @@ describe('logic', () => {
 
             return targetUser.save();
           })
-          .then((targetUser: UserModelInterface) =>
+          .then((targetUser: IUserModel) =>
             logic.listUserFollowings(username, targetUsername)
           )
-          .then((followings: UserModelInterface[]) => expect(followings).toHaveLength(4));
+          .then((followings: IUserModel[]) => expect(followings).toHaveLength(4));
       });
 
       test(
@@ -951,7 +951,7 @@ describe('logic', () => {
 
           return targetUser
             .save()
-            .then((targetUser: UserModelInterface) =>
+            .then((targetUser: IUserModel) =>
               logic.listUserFollowings(username, targetUsername)
             )
             .catch(({ message }) => {
@@ -970,7 +970,7 @@ describe('logic', () => {
 
           return targetUser
             .save()
-            .then((targetUser: UserModelInterface) =>
+            .then((targetUser: IUserModel) =>
               logic.listUserFollowings(undefined, targetUsername)
             )
             .catch(({ message }) => {
@@ -984,7 +984,7 @@ describe('logic', () => {
 
     describe('user', () => {
       beforeEach(async () => {
-        const followings: FollowingModelInterface[] = [];
+        const followings: IFollowingModel[] = [];
 
         for (let i = 0; i < 4; i++) {
           const randomUsername = `user-${Math.random()}`;
@@ -1020,7 +1020,7 @@ describe('logic', () => {
       test('should list the followings of the logged-in user', () => {
         return logic
           .listUserFollowings(username)
-          .then((followings: UserModelInterface[]) => expect(followings).toHaveLength(4));
+          .then((followings: IUserModel[]) => expect(followings).toHaveLength(4));
       });
     });
   });
@@ -1059,7 +1059,7 @@ describe('logic', () => {
 
           return Post.findById(id);
         })
-        .then((post: PostModelInterface) => {
+        .then((post: IPostModel) => {
           expect(post).toBeInstanceOf(Post);
           expect(post._id).toBeInstanceOf(ObjectId);
           expect(post.user).toBeInstanceOf(ObjectId);
@@ -1078,7 +1078,7 @@ describe('logic', () => {
 
           return Post.findById(id);
         })
-        .then((post: PostModelInterface) => {
+        .then((post: IPostModel) => {
           expect(post).toBeInstanceOf(Post);
           expect(post._id).toBeInstanceOf(ObjectId);
           expect(post.user).toBeInstanceOf(ObjectId);
@@ -1089,7 +1089,7 @@ describe('logic', () => {
   });
 
   describe('retrieve post', () => {
-    let user: UserModelInterface;
+    let user: IUserModel;
     let postId: string;
 
     beforeEach(async () => {
@@ -1101,7 +1101,7 @@ describe('logic', () => {
       let targetEmail: string;
       let targetPassword: string;
       let targetFilename: string;
-      let targetUser: UserModelInterface;
+      let targetUser: IUserModel;
 
       beforeEach(async () => {
         targetUsername = `user-${Math.random()}`;
@@ -1133,7 +1133,7 @@ describe('logic', () => {
       afterEach(() => rimraf.sync(`${__dirname}/test`));
 
       test('should retrieve the post of a public user seeing him by a logged-in user', () => {
-        return logic.retrievePost(postId, username).then((post: PostModelInterface) => {
+        return logic.retrievePost(postId, username).then((post: IPostModel) => {
           expect(post).toBeInstanceOf(Post);
           expect(post._id).toBeInstanceOf(ObjectId);
           expect(post._id.toString()).toBe(postId);
@@ -1143,7 +1143,7 @@ describe('logic', () => {
       });
 
       test('should retrieve the post of a public user seeing him by a user not logged in', () => {
-        return logic.retrievePost(postId, undefined).then((post: PostModelInterface) => {
+        return logic.retrievePost(postId, undefined).then((post: IPostModel) => {
           expect(post).toBeInstanceOf(Post);
           expect(post._id).toBeInstanceOf(ObjectId);
           expect(post._id.toString()).toBe(postId);
@@ -1157,7 +1157,7 @@ describe('logic', () => {
 
         return targetUser
           .save()
-          .then((targetUser: UserModelInterface) => {
+          .then((targetUser: IUserModel) => {
             const following = new Following();
             following.user = targetUser._id;
             following.createdAt = new Date();
@@ -1166,7 +1166,7 @@ describe('logic', () => {
 
             return user.save();
           })
-          .then((user: UserModelInterface) => {
+          .then((user: IUserModel) => {
             const follower = new Follower();
             follower.user = user._id;
             follower.createdAt = new Date();
@@ -1175,8 +1175,8 @@ describe('logic', () => {
 
             return targetUser.save();
           })
-          .then((targetUser: UserModelInterface) => logic.retrievePost(postId, username))
-          .then((post: PostModelInterface) => {
+          .then((targetUser: IUserModel) => logic.retrievePost(postId, username))
+          .then((post: IPostModel) => {
             expect(post).toBeInstanceOf(Post);
             expect(post._id).toBeInstanceOf(ObjectId);
             expect(post._id.toString()).toBe(postId);
@@ -1193,7 +1193,7 @@ describe('logic', () => {
 
           return targetUser
             .save()
-            .then((targetUser: UserModelInterface) => logic.retrievePost(postId, username))
+            .then((targetUser: IUserModel) => logic.retrievePost(postId, username))
             .catch(({ message }) => {
               expect(message).toBe(
                 `user ${username} can not see the post of user ${targetUsername}`
@@ -1210,7 +1210,7 @@ describe('logic', () => {
 
           return targetUser
             .save()
-            .then((targetUser: UserModelInterface) => logic.retrievePost(postId, undefined))
+            .then((targetUser: IUserModel) => logic.retrievePost(postId, undefined))
             .catch(({ message }) => {
               expect(message).toBe(
                 `user not logged in can not see the post of user ${targetUsername}`
@@ -1244,7 +1244,7 @@ describe('logic', () => {
       afterEach(() => rimraf.sync(`${__dirname}/test`));
 
       test('should retrieve the post of the logged-in user', () => {
-        return logic.retrievePost(postId, username).then((post: PostModelInterface) => {
+        return logic.retrievePost(postId, username).then((post: IPostModel) => {
           expect(post).toBeInstanceOf(Post);
           expect(post._id).toBeInstanceOf(ObjectId);
           expect(post._id.toString()).toBe(postId);
@@ -1256,7 +1256,7 @@ describe('logic', () => {
   });
 
   describe('list user posts', () => {
-    let user: UserModelInterface;
+    let user: IUserModel;
 
     beforeEach(async () => {
       user = await User.create({ username, email, password });
@@ -1267,7 +1267,7 @@ describe('logic', () => {
       let targetEmail: string;
       let targetPassword: string;
       let targetFilename: string;
-      let targetUser: UserModelInterface;
+      let targetUser: IUserModel;
 
       beforeEach(async () => {
         targetUsername = `user-${Math.random()}`;
@@ -1304,13 +1304,13 @@ describe('logic', () => {
       test('should list the posts of a public user seeing him by a logged-in user', () => {
         return logic
           .listUserPosts(username, targetUsername)
-          .then((posts: PostModelInterface[]) => expect(posts).toHaveLength(2));
+          .then((posts: IPostModel[]) => expect(posts).toHaveLength(2));
       });
 
       test('should list the posts of a public user seeing him by a user not logged in', () => {
         return logic
           .listUserPosts(undefined, targetUsername)
-          .then((posts: PostModelInterface[]) => expect(posts).toHaveLength(2));
+          .then((posts: IPostModel[]) => expect(posts).toHaveLength(2));
       });
 
       test('should list the posts of a private user seeing him by a logged-in follower user', () => {
@@ -1318,7 +1318,7 @@ describe('logic', () => {
 
         return targetUser
           .save()
-          .then((targetUser: UserModelInterface) => {
+          .then((targetUser: IUserModel) => {
             const following = new Following();
             following.user = targetUser._id;
             following.createdAt = new Date();
@@ -1327,7 +1327,7 @@ describe('logic', () => {
 
             return user.save();
           })
-          .then((user: UserModelInterface) => {
+          .then((user: IUserModel) => {
             const follower = new Follower();
             follower.user = user._id;
             follower.createdAt = new Date();
@@ -1336,8 +1336,8 @@ describe('logic', () => {
 
             return targetUser.save();
           })
-          .then((targetUser: UserModelInterface) => logic.listUserPosts(username, targetUsername))
-          .then((posts: PostModelInterface[]) => expect(posts).toHaveLength(2));
+          .then((targetUser: IUserModel) => logic.listUserPosts(username, targetUsername))
+          .then((posts: IPostModel[]) => expect(posts).toHaveLength(2));
       });
 
       test(
@@ -1348,7 +1348,7 @@ describe('logic', () => {
 
           return targetUser
             .save()
-            .then((targetUser: UserModelInterface) => logic.listUserPosts(username, targetUsername))
+            .then((targetUser: IUserModel) => logic.listUserPosts(username, targetUsername))
             .catch(({ message }) => {
               expect(message).toBe(
                 `user ${username} can not see the posts of user ${targetUsername}`
@@ -1365,7 +1365,7 @@ describe('logic', () => {
 
           return targetUser
             .save()
-            .then((targetUser: UserModelInterface) =>
+            .then((targetUser: IUserModel) =>
               logic.listUserPosts(undefined, targetUsername)
             )
             .catch(({ message }) => {
@@ -1405,18 +1405,18 @@ describe('logic', () => {
       test('should list the posts of the logged-in user', () => {
         return logic
           .listUserPosts(username)
-          .then((posts: PostModelInterface[]) => expect(posts).toHaveLength(2));
+          .then((posts: IPostModel[]) => expect(posts).toHaveLength(2));
       });
     });
   });
 
   describe('list user saved posts', () => {
-    let user: UserModelInterface;
+    let user: IUserModel;
     let otherUsername: string;
     let otherEmail: string;
     let otherPassword: string;
     let otherFilename: string;
-    let otherUser: UserModelInterface;
+    let otherUser: IUserModel;
 
     beforeEach(async () => {
       user = await User.create({ username, email, password });
@@ -1437,7 +1437,7 @@ describe('logic', () => {
       let targetUsername: string;
       let targetEmail: string;
       let targetPassword: string;
-      let targetUser: UserModelInterface;
+      let targetUser: IUserModel;
 
       beforeEach(async () => {
         targetUsername = `user-${Math.random()}`;
@@ -1450,7 +1450,7 @@ describe('logic', () => {
           password: targetPassword,
         });
 
-        const savedPosts: SavedPostModelInterface[] = [];
+        const savedPosts: ISavedPostModel[] = [];
 
         for (let i = 0; i < 2; i++) {
           otherFilename = `${otherUsername}-${i}.png`;
@@ -1469,7 +1469,7 @@ describe('logic', () => {
 
           const postId: string = await logic.createPost(otherUsername, otherFilename, buffer);
 
-          const post: PostModelInterface = await Post.findById(postId);
+          const post: IPostModel = await Post.findById(postId);
 
           const savedPost = new SavedPost();
           savedPost.post = post._id;
@@ -1488,13 +1488,13 @@ describe('logic', () => {
       test('should list the saved posts of a public user seeing him by a logged-in user', () => {
         return logic
           .listUserSavedPosts(username, targetUsername)
-          .then((savedPosts: PostModelInterface[]) => expect(savedPosts).toHaveLength(2));
+          .then((savedPosts: IPostModel[]) => expect(savedPosts).toHaveLength(2));
       });
 
       test('should list the saved posts of a public user seeing him by a user not logged in', () => {
         return logic
           .listUserSavedPosts(undefined, targetUsername)
-          .then((savedPosts: PostModelInterface[]) => expect(savedPosts).toHaveLength(2));
+          .then((savedPosts: IPostModel[]) => expect(savedPosts).toHaveLength(2));
       });
 
       test('should list the saved posts of a private user seeing him by a logged-in follower user', () => {
@@ -1502,7 +1502,7 @@ describe('logic', () => {
 
         return targetUser
           .save()
-          .then((targetUser: UserModelInterface) => {
+          .then((targetUser: IUserModel) => {
             const following = new Following();
             following.user = targetUser._id;
             following.createdAt = new Date();
@@ -1511,7 +1511,7 @@ describe('logic', () => {
 
             return user.save();
           })
-          .then((user: UserModelInterface) => {
+          .then((user: IUserModel) => {
             const follower = new Follower();
             follower.user = user._id;
             follower.createdAt = new Date();
@@ -1520,10 +1520,10 @@ describe('logic', () => {
 
             return targetUser.save();
           })
-          .then((targetUser: UserModelInterface) =>
+          .then((targetUser: IUserModel) =>
             logic.listUserSavedPosts(username, targetUsername)
           )
-          .then((savedPosts: PostModelInterface[]) => expect(savedPosts).toHaveLength(2));
+          .then((savedPosts: IPostModel[]) => expect(savedPosts).toHaveLength(2));
       });
 
       test(
@@ -1534,7 +1534,7 @@ describe('logic', () => {
 
           return targetUser
             .save()
-            .then((targetUser: UserModelInterface) =>
+            .then((targetUser: IUserModel) =>
               logic.listUserSavedPosts(username, targetUsername)
             )
             .catch(({ message }) => {
@@ -1553,7 +1553,7 @@ describe('logic', () => {
 
           return targetUser
             .save()
-            .then((targetUser: UserModelInterface) =>
+            .then((targetUser: IUserModel) =>
               logic.listUserSavedPosts(undefined, targetUsername)
             )
             .catch(({ message }) => {
@@ -1567,7 +1567,7 @@ describe('logic', () => {
 
     describe('user', () => {
       beforeEach(async () => {
-        const savedPosts: SavedPostModelInterface[] = [];
+        const savedPosts: ISavedPostModel[] = [];
 
         for (let i = 0; i < 2; i++) {
           otherFilename = `${otherUsername}-${i}.png`;
@@ -1586,7 +1586,7 @@ describe('logic', () => {
 
           const postId: string = await logic.createPost(otherUsername, otherFilename, buffer);
 
-          const post: PostModelInterface = await Post.findById(postId);
+          const post: IPostModel = await Post.findById(postId);
 
           const savedPost = new SavedPost();
           savedPost.post = post._id;
@@ -1605,19 +1605,19 @@ describe('logic', () => {
       test('should list the saved posts of the logged-in user', () => {
         return logic
           .listUserSavedPosts(username)
-          .then((savedPosts: PostModelInterface[]) => expect(savedPosts).toHaveLength(2));
+          .then((savedPosts: IPostModel[]) => expect(savedPosts).toHaveLength(2));
       });
     });
   });
 
   describe('list user wall', () => {
-    let user: UserModelInterface;
+    let user: IUserModel;
     let filename: string;
     let targetUsername: string;
     let targetEmail: string;
     let targetPassword: string;
     let targetFilename: string;
-    let targetUser: UserModelInterface;
+    let targetUser: IUserModel;
 
     beforeEach(async () => {
       user = await User.create({ username, email, password });
@@ -1681,7 +1681,7 @@ describe('logic', () => {
 
           return user.save();
         })
-        .then((user: UserModelInterface) => {
+        .then((user: IUserModel) => {
           const follower = new Follower();
           follower.user = user._id;
           follower.createdAt = new Date();
@@ -1690,10 +1690,10 @@ describe('logic', () => {
 
           return targetUser.save();
         })
-        .then((targetUser: UserModelInterface) => {
+        .then((targetUser: IUserModel) => {
           return logic
             .listUserWall(username)
-            .then((posts: PostModelInterface[]) => expect(posts).toHaveLength(3));
+            .then((posts: IPostModel[]) => expect(posts).toHaveLength(3));
         });
     });
 
@@ -1708,7 +1708,7 @@ describe('logic', () => {
 
           return user.save();
         })
-        .then((user: UserModelInterface) => {
+        .then((user: IUserModel) => {
           const follower = new Follower();
           follower.user = user._id;
           follower.createdAt = new Date();
@@ -1717,15 +1717,15 @@ describe('logic', () => {
 
           return targetUser.save();
         })
-        .then((targetUser: UserModelInterface) => {
+        .then((targetUser: IUserModel) => {
           return logic
             .listUserWall(username, 1)
-            .then((posts: PostModelInterface[]) => {
+            .then((posts: IPostModel[]) => {
               expect(posts).toHaveLength(1);
 
               return logic.listUserWall(username, 1, 1);
             })
-            .then((posts: PostModelInterface[]) => {
+            .then((posts: IPostModel[]) => {
               expect(posts).toHaveLength(1);
             });
         });
@@ -1733,13 +1733,13 @@ describe('logic', () => {
   });
 
   describe('add comment to post', () => {
-    let user: UserModelInterface;
+    let user: IUserModel;
     let filename: string;
     let targetUsername: string;
     let targetEmail: string;
     let targetPassword: string;
     let targetFilename: string;
-    let targetUser: UserModelInterface;
+    let targetUser: IUserModel;
     let targetPostId: string;
     let postId: string;
 
@@ -1810,13 +1810,13 @@ describe('logic', () => {
   });
 
   describe('toggle like post', () => {
-    let user: UserModelInterface;
+    let user: IUserModel;
     let filename: string;
     let targetUsername: string;
     let targetEmail: string;
     let targetPassword: string;
     let targetFilename: string;
-    let targetUser: UserModelInterface;
+    let targetUser: IUserModel;
     let targetPostId: string;
     let postId: string;
 
@@ -1899,13 +1899,13 @@ describe('logic', () => {
   });
 
   describe('toggle save post', () => {
-    let user: UserModelInterface;
+    let user: IUserModel;
     let filename: string;
     let targetUsername: string;
     let targetEmail: string;
     let targetPassword: string;
     let targetFilename: string;
-    let targetUser: UserModelInterface;
+    let targetUser: IUserModel;
     let targetPostId: string;
     let postId: string;
 
@@ -1988,16 +1988,16 @@ describe('logic', () => {
   });
 
   describe('list explore posts', () => {
-    let user: UserModelInterface;
+    let user: IUserModel;
     let filename: string;
 
-    let targetUser: UserModelInterface;
+    let targetUser: IUserModel;
     let targetUsername: string;
     let targetEmail: string;
     let targetPassword: string;
     let targetFilename: string;
 
-    let privateUser: UserModelInterface;
+    let privateUser: IUserModel;
     let privateUsername: string;
     let privateEmail: string;
     let privatePassword: string;
@@ -2085,31 +2085,31 @@ describe('logic', () => {
     test('should list explore posts correctly of only the public users', () => {
       return logic
         .listExplorePosts(username)
-        .then((posts: PostModelInterface[]) => expect(posts).toHaveLength(2));
+        .then((posts: IPostModel[]) => expect(posts).toHaveLength(2));
     });
 
     test('should list explore posts correctly of only the public users with pagination', () => {
       return logic
         .listExplorePosts(username, 1)
-        .then((posts: PostModelInterface[]) => {
+        .then((posts: IPostModel[]) => {
           expect(posts).toHaveLength(1);
 
           return logic.listExplorePosts(username, 1, 1);
         })
-        .then((posts: PostModelInterface[]) => expect(posts).toHaveLength(1));
+        .then((posts: IPostModel[]) => expect(posts).toHaveLength(1));
     });
   });
 
   describe('search', () => {
-    let user: UserModelInterface;
+    let user: IUserModel;
 
-    let targetUser: UserModelInterface;
+    let targetUser: IUserModel;
     let targetUsername: string;
     let targetEmail: string;
     let targetPassword: string;
     let targetFilename: string;
 
-    let privateUser: UserModelInterface;
+    let privateUser: IUserModel;
     let privateUsername: string;
     let privateEmail: string;
     let privatePassword: string;
@@ -2144,7 +2144,7 @@ describe('logic', () => {
     test('should search correctly users by username query', () => {
       return logic
         .search('user-')
-        .then((users: UserModelInterface[]) => expect(users).toHaveLength(3));
+        .then((users: IUserModel[]) => expect(users).toHaveLength(3));
     });
 
     test('should search correctly only one user by username query', () => {
@@ -2153,16 +2153,16 @@ describe('logic', () => {
       const onePassword = `123${Math.random()}`;
 
       return User.create({ username: oneUsername, email: oneEmail, password: onePassword })
-        .then((user: UserModelInterface) => logic.search('nly'))
-        .then((users: UserModelInterface[]) => expect(users).toHaveLength(1));
+        .then((user: IUserModel) => logic.search('nly'))
+        .then((users: IUserModel[]) => expect(users).toHaveLength(1));
     });
   });
 
   describe('retrieve user stats', () => {
-    let user: UserModelInterface;
+    let user: IUserModel;
     let filename: string;
 
-    let targetUser: UserModelInterface;
+    let targetUser: IUserModel;
     let targetUsername: string;
     let targetEmail: string;
     let targetPassword: string;
@@ -2214,7 +2214,7 @@ describe('logic', () => {
 
           return user.save();
         })
-        .then((user: UserModelInterface) => {
+        .then((user: IUserModel) => {
           const follower = new Follower();
           follower.user = user._id;
           follower.createdAt = new Date();
@@ -2223,7 +2223,7 @@ describe('logic', () => {
 
           return targetUser.save();
         })
-        .then((targetUser: UserModelInterface) => {
+        .then((targetUser: IUserModel) => {
           return logic.retrieveUserStats(username).then((stats: any) => {
             expect(stats.user).toBeDefined();
             expect(stats.user.username).toBe(username);

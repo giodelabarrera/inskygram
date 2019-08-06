@@ -1,9 +1,8 @@
-import { model, Model } from 'mongoose';
-import LikeInterface from './interface';
-import LikeModelInterface from './model-interface';
+import { Model, model } from 'mongoose';
+import { ILike, ILikeModel } from './interfaces';
 import likeSchema from './schema';
 
-const Like: Model<LikeModelInterface> = model('Like', likeSchema);
+const Like: Model<ILikeModel> = model('Like', likeSchema);
 
 export default Like;
-export { LikeInterface, LikeModelInterface, likeSchema };
+export { ILike, ILikeModel, likeSchema };

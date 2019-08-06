@@ -6,7 +6,7 @@ import passport from 'passport';
 import logic from '../logic';
 import { LogicError } from '../logic/errors';
 import statusError from './helpers/status-error';
-import { PostModelInterface } from '../models/post';
+import { IPostModel } from '../models/post';
 import publicPrivateAccessJwt from './helpers/public-private-access-jwt';
 
 config();
@@ -49,7 +49,7 @@ router.get('/posts/:id', publicPrivateAccessJwt, (req: Request, res: Response) =
 
   logic
     .retrievePost(postId, username)
-    .then((post: PostModelInterface) => res.json(post))
+    .then((post: IPostModel) => res.json(post))
     .catch((err: Error) => {
       const { message } = err;
       const status = statusError(err);

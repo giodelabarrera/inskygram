@@ -1,8 +1,8 @@
 import validator from 'validator';
-import User, { UserModelInterface } from '../models/user';
+import User, { IUserModel } from '../models/user';
 import { LogicError, AccessDeniedError, NotFoundError, UniqueConstraintError } from './errors';
 import cloudinary from '../config/cloudinary';
-import Post, { PostModelInterface } from '../models/post';
+import Post, { IPostModel } from '../models/post';
 import Following from '../models/following';
 import Follower from '../models/follower';
 import Comment from '../models/comment';
@@ -13,17 +13,17 @@ const logic = {
   /**
    * Check if the user is following the target user
    *
-   * @param {UserModelInterface} user
-   * @param {UserModelInterface} targetUser
+   * @param {IUserModel} user
+   * @param {IUserModel} targetUser
    * @returns {(Promise<boolean> | never)}
    */
   _isFollowingUser(
-    user: UserModelInterface,
-    targetUser: UserModelInterface
+    user: IUserModel,
+    targetUser: IUserModel
   ): Promise<boolean> | never {
     return Promise.resolve()
       .then(() => User.findOne({ _id: user._id, 'followings.user': targetUser._id }))
-      .then((user: UserModelInterface) => {
+      .then((user: IUserModel) => {
         return user ? true : false;
       });
   },
@@ -31,11 +31,11 @@ const logic = {
   /**
    * Check if user is the same user as the target user
    *
-   * @param {UserModelInterface} user
-   * @param {UserModelInterface} targetUser
+   * @param {IUserModel} user
+   * @param {IUserModel} targetUser
    * @returns {boolean}
    */
-  _isSameUser(user: UserModelInterface, targetUser: UserModelInterface): boolean {
+  _isSameUser(user: IUserModel, targetUser: IUserModel): boolean {
     return user._id.toString() === targetUser._id.toString();
   },
 
@@ -65,14 +65,14 @@ const logic = {
 
         return User.findOne({ username });
       })
-      .then((user: UserModelInterface) => {
+      .then((user: IUserModel) => {
         if (user) {
           throw new UniqueConstraintError(`user with username ${username} already exists`);
         }
 
         return User.findOne({ email });
       })
-      .then((user: UserModelInterface) => {
+      .then((user: IUserModel) => {
         if (user) {
           throw new UniqueConstraintError(`user with email ${email} already exists`);
         }
@@ -102,7 +102,7 @@ const logic = {
 
         return User.findOne({ username });
       })
-      .then((user: UserModelInterface) => {
+      .then((user: IUserModel) => {
         if (!user) {
           throw new NotFoundError(`user with username ${username} does not exists`);
         }
@@ -115,7 +115,7 @@ const logic = {
 
         return user.save();
       })
-      .then((user: UserModelInterface) => true);
+      .then((user: IUserModel) => true);
   },
 
   /**
@@ -129,16 +129,16 @@ const logic = {
    *
    * @param {string} [username]
    * @param {string} [targetUsername]
-   * @returns {(Promise<UserModelInterface> | never)}
+   * @returns {(Promise<IUserModel> | never)}
    */
-  retrieveUser(username?: string, targetUsername?: string): Promise<UserModelInterface> | never {
+  retrieveUser(username?: string, targetUsername?: string): Promise<IUserModel> | never {
     return Promise.resolve().then(() => {
       if (!username && !targetUsername) {
         throw new LogicError('invalid username and target username');
       }
 
       if (username && !targetUsername) {
-        return User.findOne({ username }).then((_user: UserModelInterface) => {
+        return User.findOne({ username }).then((_user: IUserModel) => {
           if (!_user) {
             throw new NotFoundError(`user with username ${username} does not exists`);
           }
@@ -149,7 +149,7 @@ const logic = {
         });
       } else if (!username && targetUsername) {
         return User.findOne({ username: targetUsername }).then(
-          (_targetUser: UserModelInterface) => {
+          (_targetUser: IUserModel) => {
             if (!_targetUser) {
               throw new NotFoundError(`user with username ${targetUsername} does not exists`);
             }
@@ -170,14 +170,14 @@ const logic = {
         );
       } else {
         return User.findOne({ username })
-          .then((_user: UserModelInterface) => {
+          .then((_user: IUserModel) => {
             if (!_user) {
               throw new NotFoundError(`user with username ${username} does not exists`);
             }
 
             return User.findOne({ username: targetUsername });
           })
-          .then((_targetUser: UserModelInterface) => {
+          .then((_targetUser: IUserModel) => {
             if (!_targetUser) {
               throw new NotFoundError(`user with username ${targetUsername} does not exists`);
             }
@@ -232,14 +232,14 @@ const logic = {
 
         return User.findOne({ username });
       })
-      .then((user: UserModelInterface) => {
+      .then((user: IUserModel) => {
         if (!user) {
           throw new NotFoundError(`user with username ${username} does not exists`);
         }
 
         if (newEmail && user.email !== newEmail) {
           return new Promise((resolve, reject) => {
-            User.findOne({ email: newEmail }).then((foundUser: UserModelInterface) => {
+            User.findOne({ email: newEmail }).then((foundUser: IUserModel) => {
               if (foundUser) {
                 return reject(
                   new UniqueConstraintError(`user with email ${newEmail} already exists`)
@@ -254,7 +254,7 @@ const logic = {
         }
         return user;
       })
-      .then((user: UserModelInterface) => {
+      .then((user: IUserModel) => {
         if (name) {
           user.name = name;
         }
@@ -306,7 +306,7 @@ const logic = {
 
         return User.findOne({ username });
       })
-      .then((user: UserModelInterface) => {
+      .then((user: IUserModel) => {
         if (!user) {
           throw new NotFoundError(`user with email ${username} does not exists`);
         }
@@ -349,7 +349,7 @@ const logic = {
 
         return User.findOne({ username });
       })
-      .then((user: UserModelInterface) => {
+      .then((user: IUserModel) => {
         if (!user) {
           throw new NotFoundError(`user with username ${username} does not exists`);
         }
@@ -369,7 +369,7 @@ const logic = {
             .end(buffer);
         });
       })
-      .then((user: UserModelInterface) => true);
+      .then((user: IUserModel) => true);
   },
 
   /**
@@ -380,8 +380,8 @@ const logic = {
    * @returns {(Promise<boolean> | never)}
    */
   toggleFollowUser(username: string, targetUsername: string): Promise<boolean> | never {
-    let user: UserModelInterface;
-    let targetUser: UserModelInterface;
+    let user: IUserModel;
+    let targetUser: IUserModel;
 
     return Promise.resolve()
       .then(() => {
@@ -394,7 +394,7 @@ const logic = {
 
         return User.findOne({ username });
       })
-      .then((_user: UserModelInterface) => {
+      .then((_user: IUserModel) => {
         if (!_user) {
           throw new NotFoundError(`user with username ${username} does not exists`);
         }
@@ -403,7 +403,7 @@ const logic = {
 
         return User.findOne({ username: targetUsername });
       })
-      .then((_targetUser: UserModelInterface) => {
+      .then((_targetUser: IUserModel) => {
         if (!_targetUser) {
           throw new NotFoundError(`user with username ${targetUsername} does not exists`);
         }
@@ -412,7 +412,7 @@ const logic = {
 
         return User.findOne({ _id: user._id, 'followings.user': targetUser._id });
       })
-      .then((foundFollowingUser: UserModelInterface) => {
+      .then((foundFollowingUser: IUserModel) => {
         if (!foundFollowingUser) {
           const following = new Following();
           following.user = targetUser._id;
@@ -453,14 +453,14 @@ const logic = {
    *
    * @param {string} [username]
    * @param {string} [targetUsername]
-   * @returns {(Promise<UserModelInterface[]> | never)}
+   * @returns {(Promise<IUserModel[]> | never)}
    */
   listUserFollowers(
     username?: string,
     targetUsername?: string
-  ): Promise<UserModelInterface[]> | never {
-    let user: UserModelInterface;
-    let targetUser: UserModelInterface;
+  ): Promise<IUserModel[]> | never {
+    let user: IUserModel;
+    let targetUser: IUserModel;
 
     return Promise.resolve().then(() => {
       if (!username && !targetUsername) {
@@ -469,7 +469,7 @@ const logic = {
 
       if (username && !targetUsername) {
         return User.findOne({ username })
-          .then((_user: UserModelInterface) => {
+          .then((_user: IUserModel) => {
             if (!_user) {
               throw new NotFoundError(`user with username ${username} does not exists`);
             }
@@ -478,10 +478,10 @@ const logic = {
 
             return User.find({ 'followings.user': user._id });
           })
-          .then((followerUsers: UserModelInterface[]) => followerUsers);
+          .then((followerUsers: IUserModel[]) => followerUsers);
       } else if (!username && targetUsername) {
         return User.findOne({ username: targetUsername }).then(
-          (_targetUser: UserModelInterface) => {
+          (_targetUser: IUserModel) => {
             if (!_targetUser) {
               throw new NotFoundError(`user with username ${username} does not exists`);
             }
@@ -494,14 +494,14 @@ const logic = {
               );
             } else {
               return User.find({ 'followings.user': targetUser._id }, { password: 0, __v: 0 }).then(
-                (followerUsers: UserModelInterface[]) => followerUsers
+                (followerUsers: IUserModel[]) => followerUsers
               );
             }
           }
         );
       } else {
         return User.findOne({ username })
-          .then((_user: UserModelInterface) => {
+          .then((_user: IUserModel) => {
             if (!_user) {
               throw new NotFoundError(`user with username ${username} does not exists`);
             }
@@ -510,7 +510,7 @@ const logic = {
 
             return User.findOne({ username: targetUsername });
           })
-          .then((_targetUser: UserModelInterface) => {
+          .then((_targetUser: IUserModel) => {
             if (!_targetUser) {
               throw new NotFoundError(`user with username ${username} does not exists`);
             }
@@ -523,7 +523,7 @@ const logic = {
                   return User.find(
                     { 'followings.user': targetUser._id },
                     { password: 0, __v: 0 }
-                  ).then((followerUsers: UserModelInterface[]) => followerUsers);
+                  ).then((followerUsers: IUserModel[]) => followerUsers);
                 } else {
                   throw new AccessDeniedError(
                     `user ${username} in can not see the follower users of user ${targetUsername}`
@@ -532,7 +532,7 @@ const logic = {
               });
             } else {
               return User.find({ 'followings.user': targetUser._id }, { password: 0, __v: 0 }).then(
-                (followerUsers: UserModelInterface[]) => followerUsers
+                (followerUsers: IUserModel[]) => followerUsers
               );
             }
           });
@@ -551,14 +551,14 @@ const logic = {
    *
    * @param {string} [username]
    * @param {string} [targetUsername]
-   * @returns {(Promise<UserModelInterface[]> | never)}
+   * @returns {(Promise<IUserModel[]> | never)}
    */
   listUserFollowings(
     username?: string,
     targetUsername?: string
-  ): Promise<UserModelInterface[]> | never {
-    let user: UserModelInterface;
-    let targetUser: UserModelInterface;
+  ): Promise<IUserModel[]> | never {
+    let user: IUserModel;
+    let targetUser: IUserModel;
 
     return Promise.resolve().then(() => {
       if (!username && !targetUsername) {
@@ -567,7 +567,7 @@ const logic = {
 
       if (username && !targetUsername) {
         return User.findOne({ username })
-          .then((_user: UserModelInterface) => {
+          .then((_user: IUserModel) => {
             if (!_user) {
               throw new NotFoundError(`user with username ${username} does not exists`);
             }
@@ -576,10 +576,10 @@ const logic = {
 
             return User.find({ 'followers.user': user._id });
           })
-          .then((followingUsers: UserModelInterface[]) => followingUsers);
+          .then((followingUsers: IUserModel[]) => followingUsers);
       } else if (!username && targetUsername) {
         return User.findOne({ username: targetUsername }).then(
-          (_targetUser: UserModelInterface) => {
+          (_targetUser: IUserModel) => {
             if (!_targetUser) {
               throw new NotFoundError(`user with username ${username} does not exists`);
             }
@@ -592,14 +592,14 @@ const logic = {
               );
             } else {
               return User.find({ 'followers.user': targetUser._id }, { password: 0, __v: 0 }).then(
-                (followingUsers: UserModelInterface[]) => followingUsers
+                (followingUsers: IUserModel[]) => followingUsers
               );
             }
           }
         );
       } else {
         return User.findOne({ username })
-          .then((_user: UserModelInterface) => {
+          .then((_user: IUserModel) => {
             if (!_user) {
               throw new NotFoundError(`user with username ${username} does not exists`);
             }
@@ -608,7 +608,7 @@ const logic = {
 
             return User.findOne({ username: targetUsername });
           })
-          .then((_targetUser: UserModelInterface) => {
+          .then((_targetUser: IUserModel) => {
             if (!_targetUser) {
               throw new NotFoundError(`user with username ${username} does not exists`);
             }
@@ -621,7 +621,7 @@ const logic = {
                   return User.find(
                     { 'followers.user': targetUser._id },
                     { password: 0, __v: 0 }
-                  ).then((followingUsers: UserModelInterface[]) => followingUsers);
+                  ).then((followingUsers: IUserModel[]) => followingUsers);
                 } else {
                   throw new AccessDeniedError(
                     `user ${username} can not see the following users of user ${targetUsername}`
@@ -630,7 +630,7 @@ const logic = {
               });
             } else {
               return User.find({ 'followers.user': targetUser._id }, { password: 0, __v: 0 }).then(
-                (followingUsers: UserModelInterface[]) => followingUsers
+                (followingUsers: IUserModel[]) => followingUsers
               );
             }
           });
@@ -666,7 +666,7 @@ const logic = {
 
         return User.findOne({ username });
       })
-      .then((user: UserModelInterface) => {
+      .then((user: IUserModel) => {
         if (!user) {
           throw new NotFoundError(`user with username ${username} does not exists`);
         }
@@ -692,7 +692,7 @@ const logic = {
             .end(buffer);
         });
       })
-      .then((post: PostModelInterface) => post.id);
+      .then((post: IPostModel) => post.id);
   },
 
   /**
@@ -702,12 +702,12 @@ const logic = {
    *
    * @param {string} postId
    * @param {string} [username]
-   * @returns {(Promise<PostModelInterface> | never)}
+   * @returns {(Promise<IPostModel> | never)}
    */
-  retrievePost(postId: string, username?: string): Promise<PostModelInterface> | never {
-    let post: PostModelInterface;
-    let targetUser: UserModelInterface;
-    let user: UserModelInterface;
+  retrievePost(postId: string, username?: string): Promise<IPostModel> | never {
+    let post: IPostModel;
+    let targetUser: IUserModel;
+    let user: IUserModel;
 
     return Promise.resolve()
       .then(() => {
@@ -717,7 +717,7 @@ const logic = {
 
         return Post.findOne({ _id: postId });
       })
-      .then((_post: PostModelInterface) => {
+      .then((_post: IPostModel) => {
         if (!_post) {
           throw new NotFoundError(`post with id ${postId} does not exists`);
         }
@@ -726,7 +726,7 @@ const logic = {
 
         return User.findById(post.user);
       })
-      .then((_targetUser: UserModelInterface) => {
+      .then((_targetUser: IUserModel) => {
         if (!_targetUser) {
           throw new NotFoundError(`user with id ${post.user} does not exists`);
         }
@@ -734,7 +734,7 @@ const logic = {
         targetUser = _targetUser;
 
         if (username) {
-          return User.findOne({ username }).then((_user: UserModelInterface) => {
+          return User.findOne({ username }).then((_user: IUserModel) => {
             if (!_user) {
               throw new NotFoundError(`user with username ${username} does not exists`);
             }
@@ -782,7 +782,7 @@ const logic = {
           }
         }
       })
-      .then((post: PostModelInterface) => post);
+      .then((post: IPostModel) => post);
   },
 
   /**
@@ -796,11 +796,11 @@ const logic = {
    *
    * @param {string} [username]
    * @param {string} [targetUsername]
-   * @returns {(Promise<PostModelInterface[]> | never)}
+   * @returns {(Promise<IPostModel[]> | never)}
    */
-  listUserPosts(username?: string, targetUsername?: string): Promise<PostModelInterface[]> | never {
-    let user: UserModelInterface;
-    let targetUser: UserModelInterface;
+  listUserPosts(username?: string, targetUsername?: string): Promise<IPostModel[]> | never {
+    let user: IUserModel;
+    let targetUser: IUserModel;
 
     return Promise.resolve().then(() => {
       if (!username && !targetUsername) {
@@ -809,7 +809,7 @@ const logic = {
 
       if (username && !targetUsername) {
         return User.findOne({ username })
-          .then((_user: UserModelInterface) => {
+          .then((_user: IUserModel) => {
             if (!_user) {
               throw new NotFoundError(`user with username ${username} does not exists`);
             }
@@ -822,10 +822,10 @@ const logic = {
               .populate({ path: 'likes.user', select: 'username' })
               .sort({ createdAt: -1 });
           })
-          .then((posts: PostModelInterface[]) => posts);
+          .then((posts: IPostModel[]) => posts);
       } else if (!username && targetUsername) {
         return User.findOne({ username: targetUsername }).then(
-          (_targetUser: UserModelInterface) => {
+          (_targetUser: IUserModel) => {
             if (!_targetUser) {
               throw new NotFoundError(`user with username ${username} does not exists`);
             }
@@ -847,7 +847,7 @@ const logic = {
         );
       } else {
         return User.findOne({ username })
-          .then((_user: UserModelInterface) => {
+          .then((_user: IUserModel) => {
             if (!_user) {
               throw new NotFoundError(`user with username ${username} does not exists`);
             }
@@ -856,7 +856,7 @@ const logic = {
 
             return User.findOne({ username: targetUsername });
           })
-          .then((_targetUser: UserModelInterface) => {
+          .then((_targetUser: IUserModel) => {
             if (!_targetUser) {
               throw new NotFoundError(`user with username ${username} does not exists`);
             }
@@ -901,14 +901,14 @@ const logic = {
    *
    * @param {string} [username]
    * @param {string} [targetUsername]
-   * @returns {(Promise<PostModelInterface[]> | never)}
+   * @returns {(Promise<IPostModel[]> | never)}
    */
   listUserSavedPosts(
     username?: string,
     targetUsername?: string
-  ): Promise<PostModelInterface[]> | never {
-    let user: UserModelInterface;
-    let targetUser: UserModelInterface;
+  ): Promise<IPostModel[]> | never {
+    let user: IUserModel;
+    let targetUser: IUserModel;
 
     return Promise.resolve().then(() => {
       if (!username && !targetUsername) {
@@ -917,7 +917,7 @@ const logic = {
 
       if (username && !targetUsername) {
         return User.findOne({ username })
-          .then((_user: UserModelInterface) => {
+          .then((_user: IUserModel) => {
             if (!_user) {
               throw new NotFoundError(`user with username ${username} does not exists`);
             }
@@ -931,10 +931,10 @@ const logic = {
               .populate({ path: 'comments.user', select: 'username' })
               .populate({ path: 'likes.user', select: 'username' });
           })
-          .then((posts: PostModelInterface[]) => posts);
+          .then((posts: IPostModel[]) => posts);
       } else if (!username && targetUsername) {
         return User.findOne({ username: targetUsername }).then(
-          (_targetUser: UserModelInterface) => {
+          (_targetUser: IUserModel) => {
             if (!_targetUser) {
               throw new NotFoundError(`user with username ${username} does not exists`);
             }
@@ -957,7 +957,7 @@ const logic = {
         );
       } else {
         return User.findOne({ username })
-          .then((_user: UserModelInterface) => {
+          .then((_user: IUserModel) => {
             if (!_user) {
               throw new NotFoundError(`user with username ${username} does not exists`);
             }
@@ -966,7 +966,7 @@ const logic = {
 
             return User.findOne({ username: targetUsername });
           })
-          .then((_targetUser: UserModelInterface) => {
+          .then((_targetUser: IUserModel) => {
             if (!_targetUser) {
               throw new NotFoundError(`user with username ${username} does not exists`);
             }
@@ -1009,21 +1009,21 @@ const logic = {
    * @param {string} username
    * @param {number} [perPage=10]
    * @param {number} [page=0]
-   * @returns {(Promise<PostModelInterface[]> | never)}
+   * @returns {(Promise<IPostModel[]> | never)}
    */
   listUserWall(
     username: string,
     perPage: number = 10,
     page: number = 0
-  ): Promise<PostModelInterface[]> | never {
-    let user: UserModelInterface;
+  ): Promise<IPostModel[]> | never {
+    let user: IUserModel;
 
     return Promise.resolve().then(() => {
       if (!username) {
         throw new LogicError('invalid username');
       }
 
-      return User.findOne({ username }).then((_user: UserModelInterface) => {
+      return User.findOne({ username }).then((_user: IUserModel) => {
         if (!_user) {
           throw new NotFoundError(`user with username ${username} does not exists`);
         }
@@ -1041,7 +1041,7 @@ const logic = {
           .skip(page * perPage)
           .limit(perPage);
       });
-      // .then((posts: PostModelInterface[]) => posts);
+      // .then((posts: IPostModel[]) => posts);
     });
   },
 
@@ -1058,8 +1058,8 @@ const logic = {
     postId: string,
     description: string
   ): Promise<boolean> | never {
-    let user: UserModelInterface;
-    let post: PostModelInterface;
+    let user: IUserModel;
+    let post: IPostModel;
 
     return Promise.resolve()
       .then(() => {
@@ -1075,7 +1075,7 @@ const logic = {
 
         return User.findOne({ username });
       })
-      .then((_user: UserModelInterface) => {
+      .then((_user: IUserModel) => {
         if (!_user) {
           throw new NotFoundError(`user with username ${username} does not exists`);
         }
@@ -1084,7 +1084,7 @@ const logic = {
 
         return Post.findOne({ _id: postId });
       })
-      .then((_post: PostModelInterface) => {
+      .then((_post: IPostModel) => {
         if (!_post) {
           throw new NotFoundError(`post with id ${postId} does not exists`);
         }
@@ -1100,7 +1100,7 @@ const logic = {
 
         return post.save();
       })
-      .then((post: PostModelInterface) => true);
+      .then((post: IPostModel) => true);
   },
 
   /**
@@ -1111,8 +1111,8 @@ const logic = {
    * @returns {(Promise<boolean> | never)}
    */
   toggleLikePost(username: string, postId: string): Promise<boolean> | never {
-    let user: UserModelInterface;
-    let post: PostModelInterface;
+    let user: IUserModel;
+    let post: IPostModel;
 
     return Promise.resolve()
       .then(() => {
@@ -1125,7 +1125,7 @@ const logic = {
 
         return User.findOne({ username });
       })
-      .then((_user: UserModelInterface) => {
+      .then((_user: IUserModel) => {
         if (!_user) {
           throw new NotFoundError(`user with username ${username} does not exists`);
         }
@@ -1134,7 +1134,7 @@ const logic = {
 
         return Post.findOne({ _id: postId });
       })
-      .then((_post: PostModelInterface) => {
+      .then((_post: IPostModel) => {
         if (!_post) {
           throw new NotFoundError(`post with id ${postId} does not exists`);
         }
@@ -1143,7 +1143,7 @@ const logic = {
 
         return Post.findOne({ _id: post._id, 'likes.user': user._id });
       })
-      .then((likedPost: PostModelInterface) => {
+      .then((likedPost: IPostModel) => {
         if (!likedPost) {
           const like = new Like();
           like.user = user._id;
@@ -1168,8 +1168,8 @@ const logic = {
    * @returns {(Promise<boolean> | never)}
    */
   toggleSavePost(username: string, postId: string): Promise<boolean> | never {
-    let user: UserModelInterface;
-    let post: PostModelInterface;
+    let user: IUserModel;
+    let post: IPostModel;
 
     return Promise.resolve()
       .then(() => {
@@ -1182,7 +1182,7 @@ const logic = {
 
         return User.findOne({ username });
       })
-      .then((_user: UserModelInterface) => {
+      .then((_user: IUserModel) => {
         if (!_user) {
           throw new NotFoundError(`user with username ${username} does not exists`);
         }
@@ -1191,7 +1191,7 @@ const logic = {
 
         return Post.findOne({ _id: postId });
       })
-      .then((_post: PostModelInterface) => {
+      .then((_post: IPostModel) => {
         if (!_post) {
           throw new NotFoundError(`post with id ${postId} does not exists`);
         }
@@ -1200,7 +1200,7 @@ const logic = {
 
         return User.findOne({ _id: user._id, 'savedPosts.post': post._id });
       })
-      .then((userWithSavedPost: UserModelInterface) => {
+      .then((userWithSavedPost: IUserModel) => {
         if (!userWithSavedPost) {
           const savedPost = new SavedPost();
           savedPost.post = post._id;
@@ -1222,14 +1222,14 @@ const logic = {
    * @param {string} username
    * @param {number} [perPage=10]
    * @param {number} [page=0]
-   * @returns {(Promise<PostModelInterface[]> | never)}
+   * @returns {(Promise<IPostModel[]> | never)}
    */
   listExplorePosts(
     username: string,
     perPage: number = 10,
     page: number = 0
-  ): Promise<PostModelInterface[]> | never {
-    let user: UserModelInterface;
+  ): Promise<IPostModel[]> | never {
+    let user: IUserModel;
 
     return Promise.resolve()
       .then(() => {
@@ -1239,7 +1239,7 @@ const logic = {
 
         return User.findOne({ username });
       })
-      .then((_user: UserModelInterface) => {
+      .then((_user: IUserModel) => {
         if (!_user) {
           throw new NotFoundError(`user with username ${username} does not exists`);
         }
@@ -1248,7 +1248,7 @@ const logic = {
 
         return User.find({ privateAccount: false }, '_id');
       })
-      .then((publicUsers: UserModelInterface[]) => {
+      .then((publicUsers: IUserModel[]) => {
         const publicUsersId = publicUsers.map(publicUser => publicUser._id);
 
         return Post.find({ user: { $in: publicUsersId } })
@@ -1259,23 +1259,23 @@ const logic = {
           .skip(page * perPage)
           .limit(perPage);
       })
-      .then((posts: PostModelInterface[]) => posts);
+      .then((posts: IPostModel[]) => posts);
   },
 
   /**
    * Search for users
    *
    * @param {string} query
-   * @returns {(Promise<UserModelInterface[]> | never)}
+   * @returns {(Promise<IUserModel[]> | never)}
    */
-  search(query: string): Promise<UserModelInterface[]> | never {
+  search(query: string): Promise<IUserModel[]> | never {
     return Promise.resolve()
       .then(() => {
         const regexp = new RegExp(`.*${query}.*`);
 
         return User.find({ username: regexp }, '-password -__v');
       })
-      .then((users: UserModelInterface[]) => users);
+      .then((users: IUserModel[]) => users);
   },
 
   /**
@@ -1285,7 +1285,7 @@ const logic = {
    * @returns {(Promise<object> | never)}
    */
   retrieveUserStats(username: string): Promise<object> | never {
-    let user: UserModelInterface;
+    let user: IUserModel;
     const stats: any = {};
 
     return Promise.resolve()
@@ -1296,7 +1296,7 @@ const logic = {
 
         return User.findOne({ username }, 'username followers followings savedPosts');
       })
-      .then((_user: UserModelInterface) => {
+      .then((_user: IUserModel) => {
         if (!_user) {
           throw new NotFoundError(`user with username ${username} does not exists`);
         }
@@ -1310,7 +1310,7 @@ const logic = {
 
         return Post.find({ user: user._id });
       })
-      .then((posts: PostModelInterface[]) => {
+      .then((posts: IPostModel[]) => {
         stats.posts = posts.length;
 
         return stats;

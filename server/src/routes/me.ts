@@ -1,12 +1,12 @@
-import { config } from "dotenv";
-import { Router, Request, Response } from "express";
-import bodyParser from "body-parser";
-import multer from "multer";
-import passport from "passport";
-import logic from "../logic";
-import statusError from "./helpers/status-error";
-import { UserModelInterface } from "../models/user";
-import { PostModelInterface } from "../models/post";
+import { config } from 'dotenv';
+import { Router, Request, Response } from 'express';
+import bodyParser from 'body-parser';
+import multer from 'multer';
+import passport from 'passport';
+import logic from '../logic';
+import statusError from './helpers/status-error';
+import { UserModelInterface } from '../models/user';
+import { PostModelInterface } from '../models/post';
 
 config();
 
@@ -16,9 +16,9 @@ const jsonBodyParser = bodyParser.json();
 
 const upload = multer();
 
-const validateJwt = passport.authenticate("jwt", { session: false });
+const validateJwt = passport.authenticate('jwt', { session: false });
 
-router.get("/me", [validateJwt], (req: Request, res: Response) => {
+router.get('/me', [validateJwt], (req: Request, res: Response) => {
   const username = req.user;
 
   logic
@@ -32,56 +32,35 @@ router.get("/me", [validateJwt], (req: Request, res: Response) => {
     });
 });
 
-router.put(
-  "/me",
-  [validateJwt, jsonBodyParser],
-  (req: Request, res: Response) => {
-    const username = req.user;
-    const {
-      body: {
-        newEmail,
-        name,
-        website,
-        phoneNumber,
-        gender,
-        biography,
-        privateAccount
-      }
-    } = req;
+router.put('/me', [validateJwt, jsonBodyParser], (req: Request, res: Response) => {
+  const username = req.user;
+  const {
+    body: { newEmail, name, website, phoneNumber, gender, biography, privateAccount },
+  } = req;
 
-    logic
-      .updateUser(
-        username,
-        newEmail,
-        name,
-        website,
-        phoneNumber,
-        gender,
-        biography,
-        privateAccount
-      )
-      .then(() => res.json({ message: "user updated" }))
-      .catch((err: Error) => {
-        const { message } = err;
-        const status = statusError(err);
+  logic
+    .updateUser(username, newEmail, name, website, phoneNumber, gender, biography, privateAccount)
+    .then(() => res.json({ message: 'user updated' }))
+    .catch((err: Error) => {
+      const { message } = err;
+      const status = statusError(err);
 
-        res.status(status).json({ message });
-      });
-  }
-);
+      res.status(status).json({ message });
+    });
+});
 
 router.patch(
-  "/me/actions/update-password",
+  '/me/actions/update-password',
   [validateJwt, jsonBodyParser],
   (req: Request, res: Response) => {
     const username = req.user;
     const {
-      body: { password, newPassword }
+      body: { password, newPassword },
     } = req;
 
     logic
       .updateUserPassword(username, password, newPassword)
-      .then(() => res.json({ message: "password updated" }))
+      .then(() => res.json({ message: 'password updated' }))
       .catch((err: Error) => {
         const { message } = err;
         const status = statusError(err);
@@ -92,8 +71,8 @@ router.patch(
 );
 
 router.patch(
-  "/me/actions/update-avatar",
-  [validateJwt, upload.single("avatar")],
+  '/me/actions/update-avatar',
+  [validateJwt, upload.single('avatar')],
   (req: Request | any, res: Response) => {
     const username = req.user;
     const { file } = req;
@@ -101,7 +80,7 @@ router.patch(
     if (file) {
       logic
         .updateUserAvatar(username, file.originalname, file.buffer)
-        .then(() => res.json({ message: "avatar updated" }))
+        .then(() => res.json({ message: 'avatar updated' }))
         .catch((err: Error) => {
           const { message } = err;
           const status = statusError(err);
@@ -109,12 +88,12 @@ router.patch(
           res.status(status).json({ message });
         });
     } else {
-      res.status(400).json({ message: "no image received" });
+      res.status(400).json({ message: 'no image received' });
     }
   }
 );
 
-router.get("/me/followers", validateJwt, (req: Request, res: Response) => {
+router.get('/me/followers', validateJwt, (req: Request, res: Response) => {
   const username = req.user;
 
   logic
@@ -128,7 +107,7 @@ router.get("/me/followers", validateJwt, (req: Request, res: Response) => {
     });
 });
 
-router.get("/me/followings", validateJwt, (req: Request, res: Response) => {
+router.get('/me/followings', validateJwt, (req: Request, res: Response) => {
   const username = req.user;
 
   logic
@@ -142,7 +121,7 @@ router.get("/me/followings", validateJwt, (req: Request, res: Response) => {
     });
 });
 
-router.get("/me/posts", validateJwt, (req: Request, res: Response) => {
+router.get('/me/posts', validateJwt, (req: Request, res: Response) => {
   const username = req.user;
 
   logic
@@ -156,7 +135,7 @@ router.get("/me/posts", validateJwt, (req: Request, res: Response) => {
     });
 });
 
-router.get("/me/saved", validateJwt, (req: Request, res: Response) => {
+router.get('/me/saved', validateJwt, (req: Request, res: Response) => {
   const username = req.user;
 
   logic
@@ -170,7 +149,7 @@ router.get("/me/saved", validateJwt, (req: Request, res: Response) => {
     });
 });
 
-router.get("/me/wall", validateJwt, (req: Request, res: Response) => {
+router.get('/me/wall', validateJwt, (req: Request, res: Response) => {
   const username = req.user;
   const perPage = req.query.per_page ? Number(req.query.per_page) : undefined;
   const page = req.query.page ? Number(req.query.page) : undefined;
@@ -186,7 +165,7 @@ router.get("/me/wall", validateJwt, (req: Request, res: Response) => {
     });
 });
 
-router.get("/me/explore", validateJwt, (req: Request, res: Response) => {
+router.get('/me/explore', validateJwt, (req: Request, res: Response) => {
   const username = req.user;
   const perPage = req.query.per_page ? Number(req.query.per_page) : undefined;
   const page = req.query.page ? Number(req.query.page) : undefined;
